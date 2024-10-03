@@ -146,3 +146,21 @@ ModeFreq = [0] * (2*NumGens + 1)
 
 # keep track of the maximum value of locus 2 allele that has appeared
 MaxParth = 0
+
+# set initial arrays
+for i in range(1, PopSize+1):
+    aa = random.random()
+    if (aa < 0.5): Sex[i] = 1
+    else: Sex[i] = 0
+    Location[i] = 0
+    Loc1Allele1[i] = 1
+    if (OverDom == 1): Loc1Allele2[i] = 0
+    else: Loc1Allele2[i] = 1
+    Loc2Allele1[i] = 0
+    Loc2Allele2[i] = 0
+    Loc3Allele1[i] = 0
+    Loc3Allele2[i] = 0
+
+# start main loop
+for i in range(1, NumGens+1):
+    pass
