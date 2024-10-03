@@ -3,19 +3,19 @@
 # get run parameters from user
 
 # PopSize=100
-popsize = int(input("Enter size of metapopulation: "))
+PopSize = int(input("Enter size of metapopulation: "))
 
 # MaxSubSize=50
-maxsubsize = int(input("Enter maximum size of subpopulation: "))
+MaxSubSize = int(input("Enter maximum size of subpopulation: "))
 
 # migRecip=1000
-migrecip = int(input("Enter reciprocal of migration rate [enter 0 for no migration; i.e. no subpopulation]: "))
-migration = 0
-if (migrecip != 0): migration = 1/migrecip
+migRecip = int(input("Enter reciprocal of migration rate [enter 0 for no migration; i.e. no subpopulation]: "))
+Migration = 0
+if (migRecip != 0): Migration = 1/migRecip
 
 # mutRecip=1000
-mutrecip = int(input("Enter reciprocal of mutation rate: "))
-mutation = 1/mutrecip
+mutRecip = int(input("Enter reciprocal of mutation rate: "))
+Mutation = 1/mutRecip
 
 '''
 rem ? "enter recombination rate between Locus 1 and Locus 2"
@@ -24,28 +24,29 @@ rem ? "enter recombination rate between Locus 2 and Locus 3”
 rem input Rec2
 '''
 
-rec1 = 0.5
-rec2 = 0.5
+Rec1 = 0.5
+Rec2 = 0.5
 
 # NumInds=4
-numinds = int(input("Enter number of individuals encountered in main population: "))
+NumInds = int(input("Enter number of individuals encountered in main population: "))
 
-numindssub = int(input("Enter number of individuals encountered in sub population: "))
+# NumIndsSub=10
+NumIndsSub = int(input("Enter number of individuals encountered in sub population: "))
 
 # MaxRepro=10
-maxrepro = int(input("Enter number of offspring per female: "))
+MaxRepro = int(input("Enter number of offspring per female: "))
 
 # f=1
 f = int(input("Choose fitness dominance [1] or fitness overdominance [2]: "))
 
-overdom = 0
-if (f != 1): overdom = 1
+OverDom = 0
+if (f != 1): OverDom = 1
 
 # NumGens=5
-numgens = int(input("Enter number of generations in the run: "))
+NumGens = int(input("Enter number of generations in the run: "))
 
 # Outfile$="outfile"
-outfile = input("Enter name of output file: ")
+Outfile = input("Enter name of output file: ")
 
 '''
 rem ? "enter random seed"
@@ -53,21 +54,40 @@ rem input RandomSeed
 '''
 
 import random
-randomseed = random.randint(0, 4999)
-random.seed(randomseed)
+RandomSeed = random.randint(0, 4999)
+random.seed(RandomSeed)
 
-parthreduction = float(input("Enter % reproduction of Parthenogenesis vs. sexual reproduction: "))
+ParthReduction = float(input("Enter % reproduction of Parthenogenesis vs. sexual reproduction: "))
 
-parthrepro = int(parthreduction*maxrepro+0.5)
+ParthRepro = int(ParthReduction*MaxRepro+0.5)
 
-print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
+print("Sexual reproduction produces "+str(MaxRepro)+" offspring. Parthenogenetic reproduction produces "+str(ParthRepro)+" offspring.")
 
 x = float(input("Enter % reproduction for parthenogenetic-capable females reproducing sexually: "))
 
-parthpenalty = 1-x
+ParthPenalty = round(1-x, 3)
 
 input("Hit any key followed by <return> to continue: ")
 
-# dimensioning
+# print all the variables
+print(f"PopSize: {PopSize}")
+print(f"MaxSubSize: {MaxSubSize}")
+print(f"migRecip: {migRecip}")
+print(f"Migration: {Migration}")
+print(f"mutRecip: {mutRecip}")
+print(f"Mutation: {Mutation}")
+print(f"Rec1: {Rec1}")
+print(f"Rec2: {Rec2}")
+print(f"NumInds: {NumInds}")
+print(f"NumIndsSub: {NumIndsSub}")
+print(f"MaxRepro: {MaxRepro}")
+print(f"f: {f}")
+print(f"OverDom: {OverDom}")
+print(f"NumGens: {NumGens}")
+print(f"Outfile: {Outfile}")
+print(f"RandomSeed: {RandomSeed}")
+print(f"ParthReduction: {ParthReduction}")
+print(f"ParthRepro: {ParthRepro}")
+print(f"ParthPenalty: {ParthPenalty}")
 
-print(popsize, maxsubsize, migrecip, mutrecip, rec1, rec2, numinds, numindssub, maxrepro, f, numgens, outfile, randomseed, parthreduction, parthrepro, parthpenalty)
+# dimensioning
