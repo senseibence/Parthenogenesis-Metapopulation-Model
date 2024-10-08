@@ -160,4 +160,45 @@ for i in range(1, popsize+1):
 
 # start main loop
 for i in range(1, numgens+1):
-    pass
+    # mutation phase
+    for j in range(1, popsize+1):
+
+        # locus 1 allele 1
+        z = random.random()
+        if (z < mutation): loc1allele1[j] = abs(loc1allele1[j] - 1)
+
+        # locus 1 allele 2
+        z = random.random()
+        if (z < mutation): loc1allele2[j] = abs(loc1allele2[j] - 1)
+
+        # locus 2 allele 1
+        z = random.random()
+        if (z < mutation): loc2allele1[j] = random.random()/2
+        if (loc2allele1[j] > maxparth): maxparth = loc2allele1[j]
+
+        # locus 2 allele 2
+        z = random.random()
+        if (z < mutation): loc2allele2[j] = random.random()/2
+        if (loc2allele2[j] > maxparth): maxparth = loc2allele2[j]
+
+        # locus 3 allele 1
+        z = random.random()
+        if (z < mutation): loc3allele1[j] = random.random()/2
+
+        # locus 3 allele 2
+        # no new random number z? 
+        if (z < mutation): loc3allele2[j] = random.random()/2
+    
+    # encounter phase
+    # each individual encounters NumInds or NumIndsSub individuals depending on its environment
+    # for programming simplicity, self-encounters and duplicate encounters count (bad luck)
+    # values of the Meeting variable are the subscripts of the encountered individual
+
+    for j in range(1, popsize+1):
+        x = numindssub
+        if (location[j] == 0): x = numinds
+
+        for z in range(1, x+1):
+            zz = random.randint(0, popsize)
+            # goto statement
+
