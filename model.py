@@ -204,7 +204,9 @@ for i in range(1, numgens+1):
             while (True):
                 zz = random.randint(0, popsize)
                 if (location[a] == location[zz]): break
-            meeting[a][b] = zz
+
+            if (b <= numinds): # index out of bounds can occur when numindssub is greater than numinds
+                meeting[a][b] = zz 
     
     '''
     11000 rem encounters check
@@ -622,6 +624,31 @@ for i in range(1, numgens+1):
     print("Maximum value of parthenogenetic allele that has appeared: "+str(maxparth))
 
 # print all data to output file
-# 
-# 
-#
+
+value_width = 20
+with open(outfile, 'w') as f:
+    
+    f.write(f"metapopulation size: {popsize}\n")
+    f.write(f"subpopulation size: {maxsubsize}\n")
+    f.write(f"sexual reproduction produces {maxrepro} offspring\n")
+    f.write(f"parthenogenetic reproduction produces {parthrepro} offspring\n")
+    f.write(f"penalty for parthenogenetic-capable females reproducing sexually: {parthpenalty}\n")
+    f.write(f"migration rate: {migration}\n")
+    f.write(f"mutation rate: {mutation}\n")
+    f.write(f"recombination rate, interval 1: {rec1}\n")
+    f.write(f"recombination rate, interval 2: {rec2}\n")
+    f.write(f"each individual in the main population encounters {numinds} individuals\n")
+    f.write(f"each individual in the subpopulation encounters {numindssub} individuals\n")
+    f.write(f"fitness overdominance (0=no, 1=yes): {overdom}\n")
+    f.write(f"maximum value of parthenogenetic allele that appeared: {maxparth}\n")
+    f.write(f"random seed: {randomseed}\n")
+    
+    
+    f.write(f"{'generation':{15}}{'mean_Loc2':{value_width}}{'mean_Loc3':{value_width}}{'mean_Loc1':{value_width}}"
+            f"{'f_prod_sexually':{value_width}}{'sexual_offspring':{value_width}}{'f_prod_parth':{value_width}}{'parth_offspring':{value_width}}\n")
+    
+    for a in range(1, numgens+1):
+        f.write(f"{a:<{15}}{loc2freq[a]:<{value_width}.5f}{loc3freq[a]:<{value_width}.5f}"
+                f"{loc1freq[a]:<{value_width}.5f}{sexuals[a]:<{value_width}.5f}"
+                f"{sexualoffspring[a]:<{value_width}.5f}{parths[a]:<{value_width}.5f}"
+                f"{parthoffspring[a]:<{value_width}.5f}\n")
