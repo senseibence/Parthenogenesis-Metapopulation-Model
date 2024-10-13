@@ -18,10 +18,10 @@ mutrecip=1000
 mutation = 1/mutrecip
 
 '''
-rem ? "enter recombination rate between Locus 1 and Locus 2"
-rem input Rec1
-rem ? "enter recombination rate between Locus 2 and Locus 3”
-rem input Rec2
+1300 rem ? "enter recombination rate between Locus 1 and Locus 2"
+1400 rem input Rec1
+1500 rem ? "enter recombination rate between Locus 2 and Locus 3”
+1600 rem input Rec2
 '''
 
 rec1 = 0.5
@@ -49,8 +49,8 @@ outfile="test.txt"
 # outfile = input("Enter name of output file: ")
 
 '''
-rem ? "enter random seed"
-rem input RandomSeed
+2210 rem ? "enter random seed"
+2220 rem input RandomSeed
 '''
 
 import random
@@ -94,6 +94,8 @@ print(f"ParthPenalty: {parthpenalty}")
 
 # helper function to create matrix
 def createMatrix(rows, cols):
+    rows += 1
+    cols += 1
     return [[0 for x in range(cols)] for y in range(rows)]
 
 # dimensioning
@@ -116,7 +118,7 @@ offspringloc3allele1 = [0] * (maxrepro*popsize + 1)
 offspringloc3allele2 = [0] * (maxrepro*popsize + 1)
 popinds = [0] * (popsize + 1)
 subinds = [0] * (popsize + 1)
-Meeting = createMatrix(popsize,numinds)
+meeting = createMatrix(popsize,numinds)
 sexmothers = [0] * (popsize + 1)
 sexfathers = [0] * (popsize + 1)
 parthmothers = [0] * (popsize + 1)
@@ -194,11 +196,355 @@ for i in range(1, numgens+1):
     # for programming simplicity, self-encounters and duplicate encounters count (bad luck)
     # values of the Meeting variable are the subscripts of the encountered individual
 
-    for j in range(1, popsize+1):
+    for a in range(1, popsize+1):
         x = numindssub
-        if (location[j] == 0): x = numinds
+        if (location[a] == 0): x = numinds
 
-        for z in range(1, x+1):
-            zz = random.randint(0, popsize)
-            # goto statement
+        for b in range(1, x+1):
+            while (True):
+                zz = random.randint(0, popsize)
+                if (location[a] == location[zz]): break
+            meeting[a][b] = zz
+    
+    '''
+    11000 rem encounters check
+    11100 rem for a = 1 to PopSize
+    11200 rem if Sex(a)=1 then goto 11300 else goto 11800
+    11300 rem ? "female ";a; "meets ";
+    11400 rem for b = 1 to NumInds
+    11500 rem if Sex(Meeting(a,b))=1 then ? "female ";Meeting(a,b);" ";
+    11600 rem if Sex(Meeting(a,b))=0 then ? "male ";Meeting(a,b);" ";
+    11700 rem next b
+    11750 rem ?
+    11800 rem next a
+    '''
+
+    sexualmatingscount = 1
+    parthmatingscount = 0
+
+    # find male that each female mates with
+    # for computational simplicity, each female will mate with the last male she encountered
+
+    for a in range(1, popsize):
+        matingflag = 0
+        if (sex[a] == 1):
+            # focal individual is female
+            for b in range(1, numinds+1):
+                if (sex[meeting[a][b]] == 0):
+                    matingflag = 1
+                    sexmothers[sexualmatingscount] = a
+                    sexfathers[sexualmatingscount] = meeting[a][b]
+            if (matingflag == 1): sexualmatingscount = sexualmatingscount+1
+            else:
+                parthmatingscount = parthmatingscount+1
+                parthmothers[parthmatingscount] = a
+        else: continue
+
+    # record number of sexual and parthenogenetic reproducing females this generation
+    sexuals[i] = sexualmatingscount-1
+    parths[i] = parthmatingscount
+
+    '''
+    15200 rem check matings
+    15300 rem for a = 1 to SexualMatingsCount-1
+    15400 rem ? "female ";SexMothers(a); " mates with male ";SexFathers(a)
+    15500 rem next a
+    15600 rem for a = 1 to ParthMatingsCount
+    15700 rem ? "female ";ParthMothers(a); " attempts parthenogenesis"
+    15800 rem next a
+    16000 rem reproduction phase
+    16100 rem sexual reproduction
+    '''
+
+    offspringcount = 0
+    max = 0
+    mhaplotype = 0
+    phaplotype = 0
+    for a in range(1, sexualmatingscount):
+        if (loc2allele1[sexmothers[a]] + loc2allele2[sexmothers[a]] == 0):
+            max = maxrepro
+        else:
+            max = int(maxrepro*(1-parthpenalty)+0.5)
+        
+        for b in range(1, max+1):
+            offspringcount = offspringcount+1
+
+            # determine maternal haplotype
+            x = random.randint(0,1)
+            y = random.random()
+            z = random.random()
+
+            if (x == 0 and y > rec1 and z > rec2): mhaplotype = 1
+            if (x == 0 and y > rec1 and z < rec2): mhaplotype = 2
+            if (x == 0 and y < rec1 and z > rec2): mhaplotype = 3
+            if (x == 0 and y < rec1 and z < rec2): mhaplotype = 4
+            if (x == 1 and y > rec1 and z > rec2): mhaplotype = 5
+            if (x == 1 and y > rec1 and z < rec2): mhaplotype = 6
+            if (x == 1 and y < rec1 and z > rec2): mhaplotype = 7
+            if (x == 1 and y < rec1 and z < rec2): mhaplotype = 8
+            
+            if (mhaplotype == 1):
+                offspringloc1allele1[offspringcount] = loc1allele1[sexmothers[a]]
+                offspringloc2allele1[offspringcount] = loc2allele1[sexmothers[a]]
+                offspringloc3allele1[offspringcount] = loc3allele1[sexmothers[a]]
+
+            if (mhaplotype == 2):
+                offspringloc1allele1[offspringcount] = loc1allele1[sexmothers[a]]
+                offspringloc2allele1[offspringcount] = loc2allele1[sexmothers[a]]
+                offspringloc3allele1[offspringcount] = loc3allele2[sexmothers[a]]
+
+            if (mhaplotype == 3):
+                offspringloc1allele1[offspringcount] = loc1allele1[sexmothers[a]]
+                offspringloc2allele1[offspringcount] = loc2allele2[sexmothers[a]]
+                offspringloc3allele1[offspringcount] = loc3allele2[sexmothers[a]]
+
+            if (mhaplotype == 4):
+                offspringloc1allele1[offspringcount] = loc1allele1[sexmothers[a]]
+                offspringloc2allele1[offspringcount] = loc2allele2[sexmothers[a]]
+                offspringloc3allele1[offspringcount] = loc3allele1[sexmothers[a]]
+            
+            if (mhaplotype == 5):
+                offspringloc1allele1[offspringcount] = loc1allele2[sexmothers[a]]
+                offspringloc2allele1[offspringcount] = loc2allele2[sexmothers[a]]
+                offspringloc3allele1[offspringcount] = loc3allele2[sexmothers[a]]
+                
+            if (mhaplotype == 6):
+                offspringloc1allele1[offspringcount] = loc1allele2[sexmothers[a]]
+                offspringloc2allele1[offspringcount] = loc2allele2[sexmothers[a]]
+                offspringloc3allele1[offspringcount] = loc3allele1[sexmothers[a]]
+
+            if (mhaplotype == 7):
+                offspringloc1allele1[offspringcount] = loc1allele2[sexmothers[a]]
+                offspringloc2allele1[offspringcount] = loc2allele1[sexmothers[a]]
+                offspringloc3allele1[offspringcount] = loc3allele1[sexmothers[a]]
+
+            if (mhaplotype == 8):
+                offspringloc1allele1[offspringcount] = loc1allele2[sexmothers[a]]
+                offspringloc2allele1[offspringcount] = loc2allele1[sexmothers[a]]
+                offspringloc3allele1[offspringcount] = loc3allele2[sexmothers[a]]
+
+            # determine paternal haplotype
+            x = random.randint(0,1)
+            y = random.random()
+            z = random.random()
+
+            if (x == 0 and y > rec1 and z > rec2): phaplotype = 1
+            if (x == 0 and y > rec1 and z < rec2): phaplotype = 2
+            if (x == 0 and y < rec1 and z > rec2): phaplotype = 3
+            if (x == 0 and y < rec1 and z < rec2): phaplotype = 4
+            if (x == 1 and y > rec1 and z > rec2): phaplotype = 5
+            if (x == 1 and y > rec1 and z < rec2): phaplotype = 6
+            if (x == 1 and y < rec1 and z > rec2): phaplotype = 7
+            if (x == 1 and y < rec1 and z < rec2): phaplotype = 8
+
+            if (phaplotype == 1):
+                offspringloc1allele2[offspringcount] = loc1allele1[sexfathers[a]]
+                offspringloc2allele2[offspringcount] = loc2allele1[sexfathers[a]]
+                offspringloc3allele2[offspringcount] = loc3allele1[sexfathers[a]]
+
+            if (phaplotype == 2):
+                offspringloc1allele2[offspringcount] = loc1allele1[sexfathers[a]]
+                offspringloc2allele2[offspringcount] = loc2allele1[sexfathers[a]]
+                offspringloc3allele2[offspringcount] = loc3allele2[sexfathers[a]]
+
+            if (phaplotype == 3):
+                offspringloc1allele2[offspringcount] = loc1allele1[sexfathers[a]]
+                offspringloc2allele2[offspringcount] = loc2allele2[sexfathers[a]]
+                offspringloc3allele2[offspringcount] = loc3allele2[sexfathers[a]]
+
+            if (phaplotype == 4):
+                offspringloc1allele2[offspringcount] = loc1allele1[sexfathers[a]]
+                offspringloc2allele2[offspringcount] = loc2allele2[sexfathers[a]]
+                offspringloc3allele2[offspringcount] = loc3allele1[sexfathers[a]]
+            
+            if (phaplotype == 5):
+                offspringloc1allele2[offspringcount] = loc1allele2[sexfathers[a]]
+                offspringloc2allele2[offspringcount] = loc2allele2[sexfathers[a]]
+                offspringloc3allele2[offspringcount] = loc3allele2[sexfathers[a]]
+                
+            if (phaplotype == 6):
+                offspringloc1allele2[offspringcount] = loc1allele2[sexfathers[a]]
+                offspringloc2allele2[offspringcount] = loc2allele2[sexfathers[a]]
+                offspringloc3allele2[offspringcount] = loc3allele1[sexfathers[a]]
+
+            if (phaplotype == 7):
+                offspringloc1allele2[offspringcount] = loc1allele2[sexfathers[a]]
+                offspringloc2allele2[offspringcount] = loc2allele1[sexfathers[a]]
+                offspringloc3allele2[offspringcount] = loc3allele1[sexfathers[a]]
+
+            if (phaplotype == 8):
+                offspringloc1allele2[offspringcount] = loc1allele2[sexfathers[a]]
+                offspringloc2allele2[offspringcount] = loc2allele1[sexfathers[a]]
+                offspringloc3allele2[offspringcount] = loc3allele2[sexfathers[a]]
+
+            # set other offspring parameters
+            offspringalive[offspringcount] = 1
+            zz = random.random() 
+            if (zz < 0.5): offspringsex[offspringcount] = 1
+            else: offspringsex[offspringcount] = 0
+            if (location[sexmothers[a]] == 1): offspringlocation[offspringcount] = 1
+            else: offspringlocation[offspringcount] = 0
+
+    # save current OffspringCount number as the number of offspring produced by sexual reproduction this generation
+    sexualoffspring[i] = offspringcount
+    # parthenogenic reproduction
+    # produce parthogenetic offspring by gamete cell duplication
+
+    mhaplotype = 0 # ensuring reset of mhaplotype
+    for a in range(1, parthmatingscount+1):
+        zz = random.random()
+        if (zz < (loc2allele1[parthmothers[a]] + loc2allele2[parthmothers[a]])):
+            # female will reproduce parthenogenetic offspring
+            for b in range(1, parthrepro+1):
+                offspringcount = offspringcount+1
+
+                # determine maternal haplotype
+                x = random.randint(0,1)
+                y = random.random()
+                z = random.random()
+
+                if (x == 0 and y > rec1 and z > rec2): mhaplotype = 1
+                if (x == 0 and y > rec1 and z < rec2): mhaplotype = 2
+                if (x == 0 and y < rec1 and z > rec2): mhaplotype = 3
+                if (x == 0 and y < rec1 and z < rec2): mhaplotype = 4
+                if (x == 1 and y > rec1 and z > rec2): mhaplotype = 5
+                if (x == 1 and y > rec1 and z < rec2): mhaplotype = 6
+                if (x == 1 and y < rec1 and z > rec2): mhaplotype = 7
+                if (x == 1 and y < rec1 and z < rec2): mhaplotype = 8
+
+                # parthenogenetic offspring represent duplicated maternal meiotic haplotypes
+
+                if (mhaplotype == 1):
+                    offspringloc1allele1[offspringcount] = loc1allele1[parthmothers[a]]
+                    offspringloc2allele1[offspringcount] = loc2allele1[parthmothers[a]]
+                    offspringloc3allele1[offspringcount] = loc3allele1[parthmothers[a]]
+                    offspringloc1allele2[offspringcount] = loc1allele1[parthmothers[a]]
+                    offspringloc2allele2[offspringcount] = loc2allele1[parthmothers[a]]
+                    offspringloc3allele2[offspringcount] = loc3allele1[parthmothers[a]]
+
+                if (mhaplotype == 2):
+                    offspringloc1allele1[offspringcount] = loc1allele1[parthmothers[a]]
+                    offspringloc2allele1[offspringcount] = loc2allele1[parthmothers[a]]
+                    offspringloc3allele1[offspringcount] = loc3allele2[parthmothers[a]]
+                    offspringloc1allele2[offspringcount] = loc1allele1[parthmothers[a]]
+                    offspringloc2allele2[offspringcount] = loc2allele1[parthmothers[a]]
+                    offspringloc3allele2[offspringcount] = loc3allele2[parthmothers[a]]
+
+                if (mhaplotype == 3):
+                    offspringloc1allele1[offspringcount] = loc1allele1[parthmothers[a]]
+                    offspringloc2allele1[offspringcount] = loc2allele2[parthmothers[a]]
+                    offspringloc3allele1[offspringcount] = loc3allele2[parthmothers[a]]
+                    offspringloc1allele2[offspringcount] = loc1allele1[parthmothers[a]]
+                    offspringloc2allele2[offspringcount] = loc2allele2[parthmothers[a]]
+                    offspringloc3allele2[offspringcount] = loc3allele2[parthmothers[a]]
+
+                if (mhaplotype == 4):
+                    offspringloc1allele1[offspringcount] = loc1allele1[parthmothers[a]]
+                    offspringloc2allele1[offspringcount] = loc2allele2[parthmothers[a]]
+                    offspringloc3allele1[offspringcount] = loc3allele1[parthmothers[a]]
+                    offspringloc1allele2[offspringcount] = loc1allele1[parthmothers[a]]
+                    offspringloc2allele2[offspringcount] = loc2allele2[parthmothers[a]]
+                    offspringloc3allele2[offspringcount] = loc3allele1[parthmothers[a]]
+
+                if (mhaplotype == 5):
+                    offspringloc1allele1[offspringcount] = loc1allele2[parthmothers[a]]
+                    offspringloc2allele1[offspringcount] = loc2allele2[parthmothers[a]]
+                    offspringloc3allele1[offspringcount] = loc3allele2[parthmothers[a]]
+                    offspringloc1allele2[offspringcount] = loc1allele2[parthmothers[a]]
+                    offspringloc2allele2[offspringcount] = loc2allele2[parthmothers[a]]
+                    offspringloc3allele2[offspringcount] = loc3allele2[parthmothers[a]]
+
+                if (mhaplotype == 6):
+                    offspringloc1allele1[offspringcount] = loc1allele2[parthmothers[a]]
+                    offspringloc2allele1[offspringcount] = loc2allele2[parthmothers[a]]
+                    offspringloc3allele1[offspringcount] = loc3allele1[parthmothers[a]]
+                    offspringloc1allele2[offspringcount] = loc1allele2[parthmothers[a]]
+                    offspringloc2allele2[offspringcount] = loc2allele2[parthmothers[a]]
+                    offspringloc3allele2[offspringcount] = loc3allele1[parthmothers[a]]
+
+                if (mhaplotype == 7):
+                    offspringloc1allele1[offspringcount] = loc1allele2[parthmothers[a]]
+                    offspringloc2allele1[offspringcount] = loc2allele1[parthmothers[a]]
+                    offspringloc3allele1[offspringcount] = loc3allele1[parthmothers[a]]
+                    offspringloc1allele2[offspringcount] = loc1allele2[parthmothers[a]]
+                    offspringloc2allele2[offspringcount] = loc2allele1[parthmothers[a]]
+                    offspringloc3allele2[offspringcount] = loc3allele1[parthmothers[a]]
+
+                if (mhaplotype == 8):
+                    offspringloc1allele1[offspringcount] = loc1allele2[parthmothers[a]]
+                    offspringloc2allele1[offspringcount] = loc2allele1[parthmothers[a]]
+                    offspringloc3allele1[offspringcount] = loc3allele2[parthmothers[a]]
+                    offspringloc1allele2[offspringcount] = loc1allele2[parthmothers[a]]
+                    offspringloc2allele2[offspringcount] = loc2allele1[parthmothers[a]]
+                    offspringloc3allele2[offspringcount] = loc3allele2[parthmothers[a]]
+                
+                # set other offspring parameters
+                offspringalive[offspringcount] = 1
+                zz = random.random()
+                if (zz < 0.5): offspringsex[offspringcount] = 1
+                else: offspringsex[offspringcount] = 0
+                if (location[parthmothers[a]] == 1): offspringlocation[offspringcount] = 1
+                else: offspringlocation[offspringcount] = 0
+            
+        else: continue
+    
+    # set number of offspring produced in parthenogenetic loop as the number of parthenogenetic offspring produced this generation
+    parthoffspring[i] = offspringcount - sexualoffspring[i]
+    # randomly sort offspring pool
+    # assign RND (0,1) to each member of OffspringCount
+    for a in range(1, offspringcount+1):
+        score[a] = random.random()
+        originalindex[a] = a
+
+    # sort OffspringCount subscripts by the random number and get new subscript for each member
+    
+    # changed bubble sort to built-in sort (nlogn)
+    combined = []
+    for i in range(1, offspringcount+1):
+        combined.append((score[i], originalindex[i]))
+    
+    combined.sort(key=lambda x: x[0])
+    score = []
+    originalindex = []
+
+    for pair in combined:
+        score.append(pair[0])
+        originalindex.append(pair[1])
+
+    '''
+    43000 rem Print the sorted array and original indices
+    43100 rem PRINT "Sorted Scores and Original Indices:"
+    43200 rem FOR i = 1 TO OffspringCount
+    43300 rem   PRINT "Score: "; score(i); " Original Index: "; originalIndex(i)
+    43400 rem NEXT i
+    43500 rem set new reordered offspring array
+    '''
+
+    for a in range(1, offspringcount+1):
+        newoffspringalive[a] = offspringalive[originalindex[a]]
+        newoffspringsex[a] = offspringsex[originalindex[a]]
+        newoffspringlocation[a] = offspringlocation[originalindex[a]]
+        newoffspringloc1allele1[a] = offspringloc1allele1[originalindex[a]]
+        newoffspringloc1allele2[a] = offspringloc1allele2[originalindex[a]]
+        newoffspringloc2allele1[a] = offspringloc2allele1[originalindex[a]]
+        newoffspringloc2allele2[a] = offspringloc2allele2[originalindex[a]]
+        newoffspringloc3allele1[a] = offspringloc3allele1[originalindex[a]]
+        newoffspringloc3allele2[a] = offspringloc3allele2[originalindex[a]]
+
+    # selection phase
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
 
