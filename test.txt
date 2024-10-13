@@ -9,12 +9,12 @@ recombination rate, interval 1: 0.5
 recombination rate, interval 2: 0.5
 each individual in the main population encounters 4 individuals
 each individual in the subpopulation encounters 10 individuals
-fitness overdominance (0=no, 1=yes): 0
-maximum value of parthenogenetic allele that appeared: 0.3897043503780232
-random seed: 1204
+fitness overdominance (0=no, 1=yes): 1
+maximum value of parthenogenetic allele that appeared: 0.4299062663161119
+random seed: 4321
 generation     mean_Loc2           mean_Loc3           mean_Loc1           f_prod_sexually     sexual_offspring    f_prod_parth        parth_offspring     
-1              0.00000             0.00000             1.00000             46.00000            460.00000           7.00000             0.00000             
-2              0.00000             0.00000             0.98500             48.00000            480.00000           0.00000             0.00000             
-3              0.00000             0.00000             0.95500             51.00000            510.00000           3.00000             0.00000             
-4              0.00000             0.00000             0.91500             46.00000            460.00000           4.00000             0.00000             
-5              0.00000             0.00000             0.93000             50.00000            500.00000           3.00000             0.00000             
+1              0.00404             0.00000             0.50000             54.00000            540.00000           7.00000             0.00000             
+2              0.00809             0.00000             0.50000             44.00000            440.00000           1.00000             0.00000             
+3              0.00404             0.00000             0.50000             45.00000            449.00000           5.00000             9.00000             
+4              0.00404             0.00000             0.50000             48.00000            480.00000           5.00000             9.00000             
+5              0.00404             0.00000             0.50000             43.00000            429.00000           6.00000             0.00000             
