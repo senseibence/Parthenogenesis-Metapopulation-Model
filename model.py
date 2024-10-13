@@ -492,6 +492,7 @@ for i in range(1, numgens+1):
     parthoffspring[i] = offspringcount - sexualoffspring[i]
     # randomly sort offspring pool
     # assign RND (0,1) to each member of OffspringCount
+
     for a in range(1, offspringcount+1):
         score[a] = random.random()
         originalindex[a] = a
@@ -499,17 +500,18 @@ for i in range(1, numgens+1):
     # sort OffspringCount subscripts by the random number and get new subscript for each member
     
     # changed bubble sort to built-in sort (nlogn)
+    # custom code to maintain scores and original index
     combined = []
-    for i in range(1, offspringcount+1):
-        combined.append((score[i], originalindex[i]))
+    for a in range(1, offspringcount+1):
+        combined.append((score[a], originalindex[a]))
     
     combined.sort(key=lambda x: x[0])
-    score = []
-    originalindex = []
 
-    for pair in combined:
-        score.append(pair[0])
-        originalindex.append(pair[1])
+    for a in range(0, offspringcount):
+        curr = combined[a]
+        score[a+1] = curr[0]
+        originalindex[a+1] = curr[1]
+    # custom code end
 
     '''
     43000 rem Print the sorted array and original indices
@@ -532,6 +534,24 @@ for i in range(1, numgens+1):
         newoffspringloc3allele2[a] = offspringloc3allele2[originalindex[a]]
 
     # selection phase
+    for a in range(1, offspringcount+1):
+
+        if (overdom == 0):
+            # fitness dominance
+            if (newoffspringloc1allele1[a] + newoffspringloc1allele2[a] == 0): newoffspringalive[a] = 0
+    
+        else:
+            # fitness overdominance
+            if (newoffspringloc1allele1[a] + newoffspringloc1allele2[a] == 0): newoffspringalive[a] = 0
+            if (newoffspringloc1allele1[a] + newoffspringloc1allele2[a] == 2): newoffspringalive[a] = 0
+
+    # simultaneously determine migration and send living offspring into adult pool for next generation
+    # need to keep count of number of individuals in the main and sub populations
+
+    maincount = 0
+    subcount = 0
+    offspringcounter = 0
+            
 
 
 
