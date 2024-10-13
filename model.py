@@ -551,20 +551,77 @@ for i in range(1, numgens+1):
     maincount = 0
     subcount = 0
     offspringcounter = 0
-            
 
+    for a in range(1, popsize+1):
+        offspringcounter = offspringcounter+1
+        while True:
+            if (newoffspringalive[offspringcounter] == 0): offspringcounter = offspringcounter+1
+            else: break
 
+        z = random.random()
+        if (z < migration): newoffspringlocation[offspringcounter] = abs(newoffspringlocation[offspringcounter]-1)
 
+        if (newoffspringlocation[offspringcounter] == 0): maincount = maincount+1
+        else: subcount = subcount+1
 
+        if (subcount > maxsubsize): newoffspringlocation[offspringcounter] = 0 
 
+        # Migration determination is complete; now the individual goes into the adult pool for the next generation
+        sex[a] = newoffspringsex[offspringcounter]
+        location[a] = newoffspringlocation[offspringcounter]
+        loc1allele1[a] = newoffspringloc1allele1[offspringcounter]
+        loc1allele2[a] = newoffspringloc1allele2[offspringcounter]
+        loc2allele1[a] = newoffspringloc2allele1[offspringcounter]
+        loc2allele2[a] = newoffspringloc2allele2[offspringcounter]
+        loc3allele1[a] = newoffspringloc3allele1[offspringcounter]
+        loc3allele2[a] = newoffspringloc3allele2[offspringcounter]
+    
+    '''
+    49910 rem check genotypes
+    49920 rem for a = 1 to PopSize
+    49930 rem ? "ind# ";a;" ";
+    49940 rem ? "sex ";Sex(a);" ";
+    49950 rem ? "loc ";Location(a);" ";
+    49960 rem ? "genotype ";Loc1Allele1(a);Loc1Allele2(a);" ";Loc2Allele1(a);Loc2Allele2(a);" ";Loc3Allele1(a);Loc3Allele2(a)
+    49965 rem next a
+    49970 rem ? "hit any key then [return] to continue"
+    49980 rem input x$
+    50000 rem compute and store generation data
+    50100 rem calculate allele frequencies at each locus for this generation
+    '''
 
-            
+    print()
+    maincount = 0
+    subcount = 0
+    print("generation "+str(i))
+    loc1count = 0
+    loc2count = 0
+    loc3count = 0
+    for a in range(1, popsize+1):
+        loc1count = loc1count+loc1allele1[a]+loc1allele2[a]
+        loc2count = loc2count+loc2allele1[a]+loc2allele2[a]
+        loc3count = loc3count+loc3allele1[a]+loc3allele2[a]
+        if (location[a] == 0): maincount = maincount+1
+        if (location[a] == 1): subcount = subcount+1
+    
+    loc1freq[i] = loc1count/(2*popsize)
+    print("mean fitness (determined by Locus 1) = "+str(loc1freq[i]))
+    loc2freq[i] = loc2count/popsize
+    print("Mean Parthenogenetic Capability (determined by Locus 2) = "+str(loc2freq[i]))
+    loc3freq[i] = loc3count/popsize
+    print("Locus 3 mean (neutral locus) = "+str(loc3freq[i]))
+    print("main population: "+str(maincount)+" individuals")
+    print("subpopulation: "+str(subcount)+" individuals")
+    print(str(sexuals[i])+" females reproduced sexually")
+    print(str(sexualoffspring[i])+" sexual offspring produced")
+    print(str(parths[i])+" females attempted to reproduce parthenogenetically")
+    print(str(parthoffspring[i])+" parthenogenetic offspring produced")
+    
+    if (overdom == 1 and parthoffspring[i] > 0): print("(but these die due to homoz. Lethality)")
+    else: print("overdom==0 OR parthoffspring[i] >= 0")
+    print("Maximum value of parthenogenetic allele that has appeared: "+str(maxparth))
 
-
-
-
-
-
-
-
-
+# print all data to output file
+# 
+# 
+#
