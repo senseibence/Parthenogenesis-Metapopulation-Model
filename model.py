@@ -188,7 +188,7 @@ for i in range(1, numgens+1):
         if (z < mutation): loc3allele1[j] = random.random()/2
 
         # locus 3 allele 2
-        # no new random number z? 
+        z = random.random()
         if (z < mutation): loc3allele2[j] = random.random()/2
     
     # encounter phase
