@@ -98,8 +98,13 @@ def createMatrix(rows, cols):
     cols += 1
     return [[0 for x in range(cols)] for y in range(rows)]
 
+# custom variables for graph
 total_runs = 50
 total_loc2_allele_freq = createMatrix(total_runs-1, numgens-1)
+total_loc2_allele_sum = createMatrix(total_runs-1, numgens-1)
+total_loc3_allele_freq = createMatrix(total_runs-1, numgens-1)
+total_loc3_allele_sum = createMatrix(total_runs-1, numgens-1)
+
 for run in range(total_runs):
 
     # dimensioning
@@ -148,8 +153,8 @@ for run in range(total_runs):
     parths = [0] * (2*numgens + 1)
 
     # custom variables for graph
-    # all_loc2_allele_sums_no_normalization = []
-    loc2count = 0
+    generation_loc2_allele_sum = []
+    generation_loc3_allele_sum = []
 
     # keep track of the maximum value of locus 2 allele that has appeared
     maxparth = 0
@@ -603,7 +608,7 @@ for run in range(total_runs):
         print()
         maincount = 0
         subcount = 0
-        print("generation "+str(i))
+        print("run "+str(run)+", generation "+str(i))
         loc1count = 0
         loc2count = 0
         loc3count = 0
@@ -616,10 +621,11 @@ for run in range(total_runs):
         
         loc1freq[i] = loc1count/(2*popsize)
         print("mean fitness (determined by Locus 1) = "+str(loc1freq[i]))
-        loc2freq[i] = loc2count/popsize
-        # all_loc2_allele_sums_no_normalization.append(loc2count)
+        loc2freq[i] = loc2count/(2*popsize) # originally was divided by just popsize
+        generation_loc2_allele_sum.append(loc2count)
         print("Mean Parthenogenetic Capability (determined by Locus 2) = "+str(loc2freq[i]))
-        loc3freq[i] = loc3count/popsize
+        loc3freq[i] = loc3count/(2*popsize) # originally was divided by just popsize
+        generation_loc3_allele_sum.append(loc3count)
         print("Locus 3 mean (neutral locus) = "+str(loc3freq[i]))
         print("main population: "+str(maincount)+" individuals")
         print("subpopulation: "+str(subcount)+" individuals")
@@ -633,23 +639,27 @@ for run in range(total_runs):
         print("Maximum value of parthenogenetic allele that has appeared: "+str(maxparth))
 
     # custom variables for graph
-    y_axis = []
+    y_axis_loc2 = []
     for i in range(1, 1001):
-        y_axis.append(loc2freq[i])
+        y_axis_loc2.append(loc2freq[i])
 
-    total_loc2_allele_freq[run] = y_axis
+    y_axis_loc3 = []
+    for i in range(1, 1001):
+        y_axis_loc3.append(loc3freq[i])
 
-# print all data to output file
+    total_loc2_allele_freq[run] = y_axis_loc2
+    total_loc2_allele_sum[run] = generation_loc2_allele_sum.copy()
+    total_loc3_allele_freq[run] = y_axis_loc3
+    total_loc3_allele_sum[run] = generation_loc3_allele_sum.copy()
 
 # graphing trends
 import matplotlib.pyplot as plt
 
-# generations = list(range(1, 1001))
-
 figure, axis = plt.subplots(2, 2, figsize=(12, 8))
 
+# Plot 1
 axis[0,0].set_xlim(0, numgens)
-axis[0,0].set_ylim(0, 0.5)
+axis[0,0].set_ylim(0, 0.6)
 axis[0,0].set_xlabel("Generations")
 axis[0,0].set_ylabel("Frequency")
 axis[0,0].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency")
@@ -657,29 +667,40 @@ axis[0,0].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency")
 for run in range(total_runs):
     axis[0,0].plot(total_loc2_allele_freq[run], color=plt.cm.rainbow(run / total_runs))
 
-'''y_axis = []
-for i in range(1, 1001):
-    y_axis.append(loc2freq[i])'''
+# Plot 2
+axis[0,1].set_xlim(0, numgens)
+axis[0,1].set_ylim(0, 100)
+axis[0,1].set_xlabel("Generations")
+axis[0,1].set_ylabel("Sum")
+axis[0,1].set_title("Total Locus 2 (Parthenogenetic) Allele Sum")
 
-'''figure, axis = plt.subplots(2, 2, figsize=(12, 8))
+for run in range(total_runs):
+    axis[0,1].plot(total_loc2_allele_sum[run], color=plt.cm.rainbow(run / total_runs))
 
-# Still currently an overestime by a factor of 2
-axis[0, 0].plot(generations, y_axis, color='blue', label='Average Locus 2 (Parthenogenetic) Allele Frequency')
-axis[0, 0].set_ylim(0, 1)
-axis[0, 0].set_xlabel('Generations')
-axis[0, 0].set_ylabel('Frequency')
-axis[0, 0].set_title('Average Locus 2 (Parthenogenetic) Allele Frequency')
-axis[0, 0].legend()'''
+# Plot 3
+axis[1,0].set_xlim(0, numgens)
+axis[1,0].set_ylim(0, 0.6)
+axis[1,0].set_xlabel("Generations")
+axis[1,0].set_ylabel("Frequency")
+axis[1,0].set_title("Average Locus 3 (Neutral) Allele Frequency")
 
-'''axis[0, 1].plot(generations, all_loc2_allele_sums_no_normalization, color='red', label='Total Locus 2 (Parthenogenetic) Allele Values')
-axis[0, 1].set_ylim(0, 100)
-axis[0, 1].set_xlabel('Generations')
-axis[0, 1].set_ylabel('Sum')
-axis[0, 1].set_title('Total Locus 2 (Parthenogenetic) Allele Values')
-axis[0, 1].legend()'''
+for run in range(total_runs):
+    axis[1,0].plot(total_loc3_allele_freq[run], color=plt.cm.rainbow(run / total_runs))
+
+# Plot 4
+axis[1,1].set_xlim(0, numgens)
+axis[1,1].set_ylim(0, 100)
+axis[1,1].set_xlabel("Generations")
+axis[1,1].set_ylabel("Sum")
+axis[1,1].set_title("Total Locus 3 (Neutral) Allele Sum")
+
+for run in range(total_runs):
+    axis[1,1].plot(total_loc3_allele_sum[run], color=plt.cm.rainbow(run / total_runs))
 
 plt.tight_layout()
 plt.show()
+
+# print all data to output file
 
 value_width = 20
 with open(outfile, 'w') as f:
