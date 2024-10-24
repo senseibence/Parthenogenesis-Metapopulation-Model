@@ -13,7 +13,7 @@ migrecip=1000
 migration = 0
 if (migrecip != 0): migration = 1/migrecip
 
-mutrecip=1000
+mutrecip=10000 # before: 1000
 # mutrecip = int(input("Enter reciprocal of mutation rate: "))
 mutation = 1/mutrecip
 
@@ -30,7 +30,7 @@ rec2 = 0.5
 numinds=4
 # numinds = int(input("Enter number of individuals encountered in main population: "))
 
-numindssub=10
+numindssub=2
 # numindssub = int(input("Enter number of individuals encountered in sub population: "))
 
 maxrepro=10
@@ -42,7 +42,7 @@ f=1
 overdom = 0
 if (f != 1): overdom = 1
 
-numgens=5
+numgens=1000
 # numgens = int(input("Enter number of generations in the run: "))
 
 outfile="test.txt"
@@ -57,7 +57,7 @@ import random
 randomseed = random.randint(0, 4999)
 random.seed(randomseed)
 
-parthreduction=0.9
+parthreduction=0.2
 # parthreduction = float(input("Enter % reproduction of Parthenogenesis vs. sexual reproduction: "))
 
 parthrepro = int(parthreduction*maxrepro+0.5)
@@ -624,6 +624,22 @@ for i in range(1, numgens+1):
     print("Maximum value of parthenogenetic allele that has appeared: "+str(maxparth))
 
 # print all data to output file
+
+import matplotlib.pyplot as plt
+generations = list(range(1, 1001))
+
+y_axis = []
+for i in range(1, 1001):
+    y_axis.append(loc2freq[i])
+
+plt.figure(figsize=(10, 6))
+plt.plot(generations, y_axis, color='blue', label='Average Locus 2 (Parthenogenetic) Allele Frequency')
+plt.ylim(0, 1)
+plt.xlabel('Generations')
+plt.ylabel('Frequency')
+plt.title('Average Locus 2 (Parthenogenetic) Allele Frequency Over Generations')
+plt.legend()
+plt.show()
 
 value_width = 20
 with open(outfile, 'w') as f:
