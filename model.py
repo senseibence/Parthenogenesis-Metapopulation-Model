@@ -100,8 +100,8 @@ def createMatrix(rows, cols):
 
 # custom variables for graph
 total_runs = 50
-total_loc2_allele_freq = createMatrix(total_runs-1, numgens-1)
-total_loc3_allele_freq = createMatrix(total_runs-1, numgens-1)
+total_loc2_allele_freq = [0] * (total_runs)
+total_loc3_allele_freq = [0] * (total_runs)
 for run in range(total_runs):
 
     # dimensioning
@@ -631,11 +631,11 @@ for run in range(total_runs):
 
     # custom variables for graph
     y_axis_loc2 = []
-    for i in range(1, 1001):
+    for i in range(1, numgens+1):
         y_axis_loc2.append(loc2freq[i])
 
     y_axis_loc3 = []
-    for i in range(1, 1001):
+    for i in range(1, numgens+1):
         y_axis_loc3.append(loc3freq[i])
 
     total_loc2_allele_freq[run] = y_axis_loc2
