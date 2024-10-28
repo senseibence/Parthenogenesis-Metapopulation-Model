@@ -13,7 +13,7 @@ migrecip=1000
 migration = 0
 if (migrecip != 0): migration = 1/migrecip
 
-mutrecip=10000 # originally 1000
+mutrecip=10000
 # mutrecip = int(input("Enter reciprocal of mutation rate: "))
 mutation = 1/mutrecip
 
@@ -45,7 +45,7 @@ if (f != 1): overdom = 1
 numgens=1000
 # numgens = int(input("Enter number of generations in the run: "))
 
-outfile="test.txt"
+outfile="last_gen.txt"
 # outfile = input("Enter name of output file: ")
 
 '''
@@ -62,35 +62,12 @@ parthreduction=0.2
 
 parthrepro = int(parthreduction*maxrepro+0.5)
 
-print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
-
 x = 0.9
 # x = float(input("Enter % reproduction for parthenogenetic-capable females reproducing sexually: "))
 
 parthpenalty = round(1-x, 3)
 
 # input("Hit any key followed by <return> to continue: ")
-
-# print all the variables
-print(f"PopSize: {popsize}")
-print(f"MaxSubSize: {maxsubsize}")
-print(f"migRecip: {migrecip}")
-print(f"Migration: {migration}")
-print(f"mutRecip: {mutrecip}")
-print(f"Mutation: {mutation}")
-print(f"Rec1: {rec1}")
-print(f"Rec2: {rec2}")
-print(f"NumInds: {numinds}")
-print(f"NumIndsSub: {numindssub}")
-print(f"MaxRepro: {maxrepro}")
-print(f"f: {f}")
-print(f"OverDom: {overdom}")
-print(f"NumGens: {numgens}")
-print(f"Outfile: {outfile}")
-print(f"RandomSeed: {randomseed}")
-print(f"ParthReduction: {parthreduction}")
-print(f"ParthRepro: {parthrepro}")
-print(f"ParthPenalty: {parthpenalty}")
 
 # helper function to create matrix
 def createMatrix(rows, cols):
@@ -181,21 +158,21 @@ for run in range(total_runs):
 
             # locus 2 allele 1
             z = random.random()
-            if (z < mutation): loc2allele1[j] = random.random()/2
+            if (z < mutation): loc2allele1[j] = 0.5 # random.random()/2
             if (loc2allele1[j] > maxparth): maxparth = loc2allele1[j]
 
             # locus 2 allele 2
             z = random.random()
-            if (z < mutation): loc2allele2[j] = random.random()/2
+            if (z < mutation): loc2allele2[j] = 0.5 # random.random()/2
             if (loc2allele2[j] > maxparth): maxparth = loc2allele2[j]
 
             # locus 3 allele 1
             z = random.random()
-            if (z < mutation): loc3allele1[j] = random.random()/2
+            if (z < mutation): loc3allele1[j] = 0.5 # random.random()/2
 
             # locus 3 allele 2
             z = random.random()
-            if (z < mutation): loc3allele2[j] = random.random()/2
+            if (z < mutation): loc3allele2[j] = 0.5 # random.random()/2
         
         # encounter phase
         # each individual encounters NumInds or NumIndsSub individuals depending on its environment
@@ -613,21 +590,21 @@ for run in range(total_runs):
             if (location[a] == 1): subcount = subcount+1
         
         loc1freq[i] = loc1count/(2*popsize)
-        print("mean fitness (determined by Locus 1) = "+str(loc1freq[i]))
+        # print("mean fitness (determined by Locus 1) = "+str(loc1freq[i]))
         loc2freq[i] = loc2count/(2*popsize) # originally divided by just popsize
-        print("Mean Parthenogenetic Capability (determined by Locus 2) = "+str(loc2freq[i]))
+        # print("Mean Parthenogenetic Capability (determined by Locus 2) = "+str(loc2freq[i]))
         loc3freq[i] = loc3count/(2*popsize) # originally divided by just popsize
-        print("Locus 3 mean (neutral locus) = "+str(loc3freq[i]))
-        print("main population: "+str(maincount)+" individuals")
-        print("subpopulation: "+str(subcount)+" individuals")
-        print(str(sexuals[i])+" females reproduced sexually")
-        print(str(sexualoffspring[i])+" sexual offspring produced")
-        print(str(parths[i])+" females attempted to reproduce parthenogenetically")
-        print(str(parthoffspring[i])+" parthenogenetic offspring produced")
+        # print("Locus 3 mean (neutral locus) = "+str(loc3freq[i]))
+        # print("main population: "+str(maincount)+" individuals")
+        # print("subpopulation: "+str(subcount)+" individuals")
+        # print(str(sexuals[i])+" females reproduced sexually")
+        # print(str(sexualoffspring[i])+" sexual offspring produced")
+        # print(str(parths[i])+" females attempted to reproduce parthenogenetically")
+        # print(str(parthoffspring[i])+" parthenogenetic offspring produced")
         
-        if (overdom == 1 and parthoffspring[i] > 0): print("(but these die due to homoz. Lethality)")
-        else: print("overdom==0 OR parthoffspring[i] >= 0")
-        print("Maximum value of parthenogenetic allele that has appeared: "+str(maxparth))
+        # if (overdom == 1 and parthoffspring[i] > 0): print("(but these die due to homoz. Lethality)")
+        # else: print("overdom==0 OR parthoffspring[i] >= 0")
+        # print("Maximum value of parthenogenetic allele that has appeared: "+str(maxparth))
 
     # custom variables for graph
     y_axis_loc2 = []
@@ -640,6 +617,29 @@ for run in range(total_runs):
 
     total_loc2_allele_freq[run] = y_axis_loc2
     total_loc3_allele_freq[run] = y_axis_loc3
+
+# print all the variables
+print()
+print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
+print(f"PopSize: {popsize}")
+print(f"MaxSubSize: {maxsubsize}")
+print(f"migRecip: {migrecip}")
+print(f"Migration: {migration}")
+print(f"mutRecip: {mutrecip}")
+print(f"Mutation: {mutation}")
+print(f"Rec1: {rec1}")
+print(f"Rec2: {rec2}")
+print(f"NumInds: {numinds}")
+print(f"NumIndsSub: {numindssub}")
+print(f"MaxRepro: {maxrepro}")
+print(f"f: {f}")
+print(f"OverDom: {overdom}")
+print(f"NumGens: {numgens}")
+print(f"Outfile: {outfile}")
+print(f"RandomSeed: {randomseed}")
+print(f"ParthReduction: {parthreduction}")
+print(f"ParthRepro: {parthrepro}")
+print(f"ParthPenalty: {parthpenalty}")
 
 # graphing trends
 import matplotlib.pyplot as plt
