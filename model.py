@@ -83,6 +83,7 @@ for run in range(total_runs):
 
     # dimensioning
     sex = [0] * (popsize*2 + 1)
+    sex[0] = -1 # prevents unintended mating
     location = [0] * (popsize + 1)
     loc1allele1 = [0] * (popsize + 1)
     loc1allele2 = [0] * (popsize + 1)
@@ -185,7 +186,7 @@ for run in range(total_runs):
 
             for b in range(1, x+1):
                 while (True):
-                    zz = random.randint(0, popsize)
+                    zz = random.randint(1, popsize) # 0 was original lower bound
                     if (location[a] == location[zz]): break
 
                 if (b <= numinds): # index out of bounds can occur when numindssub is greater than numinds
