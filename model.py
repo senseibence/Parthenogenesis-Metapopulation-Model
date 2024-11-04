@@ -2,7 +2,7 @@
 # parth 19 adds option to have no migration, i.e. no subpopulation
 # get run parameters from user
 
-popsize=100
+popsize=500
 # popsize = int(input("Enter size of metapopulation: "))
 
 maxsubsize=50
@@ -185,12 +185,25 @@ for run in range(total_runs):
             if (location[a] == 0): x = numinds
 
             for b in range(1, x+1):
-                while (True):
-                    zz = random.randint(1, popsize) # 0 was original lower bound
-                    if (location[a] == location[zz]): break
 
-                if (b <= numinds): # index out of bounds can occur when numindssub is greater than numinds
-                    meeting[a][b] = zz 
+                temp_list = []
+
+                while (True):
+
+                    if (len(temp_list) >= popsize): break   
+
+                    zz = random.randint(1, popsize) # 0 was original lower bound
+
+                    if (a != zz): # prevents self-encounters
+                        if (location[a] == location[zz]): # prevents encounters between individuals in different environments
+                            # allowing all 4 male/female encounter types to occur
+                            break
+                    
+                    if (zz not in temp_list): temp_list.append(zz)
+
+                if (len(temp_list) < popsize): # allows for there to be no encounter
+                    if (b <= numinds): # index out of bounds can occur when numindssub is greater than numinds
+                        meeting[a][b] = zz 
         
         '''
         11000 rem encounters check
