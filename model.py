@@ -45,7 +45,7 @@ if (f != 1): overdom = 1
 numgens=1000
 # numgens = int(input("Enter number of generations in the run: "))
 
-outfile="last_gen.txt"
+outfile="output.txt"
 # outfile = input("Enter name of output file: ")
 
 '''
@@ -80,6 +80,7 @@ total_runs = 50
 total_loc2_allele_freq = [0] * (total_runs)
 total_loc3_allele_freq = [0] * (total_runs)
 for run in range(total_runs):
+    print("Run: ", run)
 
     # dimensioning
     sex = [0] * (popsize*2 + 1)
@@ -589,10 +590,10 @@ for run in range(total_runs):
         50100 rem calculate allele frequencies at each locus for this generation
         '''
 
-        print()
+        # print()
         maincount = 0
         subcount = 0
-        print("run "+str(run)+", generation "+str(i))
+        # print("run "+str(run)+", generation "+str(i))
         loc1count = 0
         loc2count = 0
         loc3count = 0
