@@ -2,7 +2,7 @@
 # parth 19 adds option to have no migration, i.e. no subpopulation
 # get run parameters from user
 
-popsize=500
+popsize=100
 # popsize = int(input("Enter size of metapopulation: "))
 
 maxsubsize=50
@@ -54,8 +54,9 @@ outfile="output.txt"
 '''
 
 import random
-randomseed = random.randint(0, 4999)
-random.seed(randomseed)
+randomseed = 0
+# randomseed = random.randint(0, 4999)
+# random.seed(randomseed)
 
 parthreduction=0.2
 # parthreduction = float(input("Enter % reproduction of Parthenogenesis vs. sexual reproduction: "))
@@ -81,6 +82,9 @@ total_loc2_allele_freq = [0] * (total_runs)
 total_loc3_allele_freq = [0] * (total_runs)
 for run in range(total_runs):
     print("Run: ", run)
+    
+    randomseed = random.randint(0, 4999)
+    random.seed(randomseed)
 
     # dimensioning
     sex = [0] * (popsize*2 + 1)
@@ -635,7 +639,6 @@ for run in range(total_runs):
 
 # print all the variables
 print()
-print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
 print(f"PopSize: {popsize}")
 print(f"MaxSubSize: {maxsubsize}")
 print(f"migRecip: {migrecip}")
@@ -655,6 +658,7 @@ print(f"RandomSeed: {randomseed}")
 print(f"ParthReduction: {parthreduction}")
 print(f"ParthRepro: {parthrepro}")
 print(f"ParthPenalty: {parthpenalty}")
+print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
 
 # graphing trends
 import matplotlib.pyplot as plt
