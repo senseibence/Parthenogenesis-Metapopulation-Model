@@ -8,7 +8,7 @@ popsize=3000
 maxsubsize=30
 # maxsubsize = int(input("Enter maximum size of subpopulation: "))
 
-migrecip=0
+migrecip=1000
 # migrecip = int(input("Enter reciprocal of migration rate [enter 0 for no migration; i.e. no subpopulation]: "))
 migration = 0
 if (migrecip != 0): migration = 1/migrecip
@@ -36,7 +36,7 @@ numindssub=1
 maxrepro=10
 # maxrepro = int(input("Enter number of offspring per female: "))
 
-f=0
+f=1
 # f = int(input("Choose fitness dominance [1] or fitness overdominance [2]: "))
 
 overdom = 0
@@ -575,7 +575,7 @@ for run in range(total_runs):
         # print()
         maincount = 0
         subcount = 0
-        # print("run "+str(run)+", generation "+str(i))
+        print("run "+str(run)+", generation "+str(i))
         loc1count = 0
         loc2count = 0
         loc3count = 0
@@ -617,7 +617,6 @@ for run in range(total_runs):
 
 # print all the variables
 print()
-print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
 print(f"PopSize: {popsize}")
 print(f"MaxSubSize: {maxsubsize}")
 print(f"migRecip: {migrecip}")
@@ -637,6 +636,7 @@ print(f"RandomSeed: {randomseed}")
 print(f"ParthReduction: {parthreduction}")
 print(f"ParthRepro: {parthrepro}")
 print(f"ParthPenalty: {parthpenalty}")
+print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
 
 # graphing trends
 import matplotlib.pyplot as plt

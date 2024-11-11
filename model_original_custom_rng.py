@@ -589,7 +589,7 @@ for run in range(total_runs):
         # print()
         maincount = 0
         subcount = 0
-        # print("run "+str(run)+", generation "+str(i))
+        print("run "+str(run)+", generation "+str(i))
         loc1count = 0
         loc2count = 0
         loc3count = 0
@@ -631,7 +631,6 @@ for run in range(total_runs):
 
 # print all the variables
 print()
-print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
 print(f"PopSize: {popsize}")
 print(f"MaxSubSize: {maxsubsize}")
 print(f"migRecip: {migrecip}")
@@ -651,6 +650,7 @@ print(f"RandomSeed: {42}")
 print(f"ParthReduction: {parthreduction}")
 print(f"ParthRepro: {parthrepro}")
 print(f"ParthPenalty: {parthpenalty}")
+print("Sexual reproduction produces "+str(maxrepro)+" offspring. Parthenogenetic reproduction produces "+str(parthrepro)+" offspring.")
 
 # graphing trends
 import matplotlib.pyplot as plt
