@@ -1,4 +1,4 @@
-# Facultative Parthenogenesis Metapopulation model v1
+# Facultative Parthenogenesis Metapopulation model v2
 # Modified for parallel processing
 
 import random
@@ -15,9 +15,9 @@ def createMatrix(rows, cols):
 # The simulation function for each run
 def run_simulation(run):
     # Constants and parameters
-    popsize=500
+    popsize=3000
     maxsubsize=50
-    migrecip=1000
+    migrecip=30000
     migration = 0
     if (migrecip != 0): migration = 1/migrecip
 
@@ -355,7 +355,7 @@ def run_simulation(run):
 
 if __name__ == '__main__':
     total_runs = 50
-    num_processes = 32  # Adjust this based on your CPU
+    num_processes = 32  # Number of CPU logical processors
     numgens = 1000
 
     total_loc2_allele_freq = []
