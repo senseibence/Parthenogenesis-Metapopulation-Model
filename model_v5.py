@@ -17,29 +17,23 @@ def createMatrix(rows, cols):
 def run_simulation(run):
     
     # parameters
-    popsize=500
-    maxsubsize=50
-    migrecip=5000
-    migration = 0
-    if (migrecip != 0): migration = 1/migrecip
-
-    mutrecip=10000
+    popsize=5000
+    maxsubsize=500
+    migration = (0.01)*(1/popsize)
+    mutrecip=10000000
     mutation = 1/mutrecip
-
     rec1 = 0.5
     rec2 = 0.5
-
-    numinds=4
-    numindssub=2
+    numinds=10
+    numindssub=min(int(0.04*maxsubsize), numinds//2)
     maxrepro=10
     f=1
     overdom = 0
     if (f != 1): overdom = 1
-    numgens=1000
+    numgens=2000
     parthreduction=0.2
     parthrepro = int(parthreduction*maxrepro+0.5)
-    x = 0.9
-    parthpenalty = round(1-x, 3)
+    parthpenalty = 0.25
 
     randomseed = random.randint(0, 4999) + run  # ensure different seeds
     random.seed(randomseed)
@@ -383,9 +377,9 @@ def run_simulation(run):
     return y_axis_loc2, y_axis_loc3, y_axis_loc2_main, y_axis_loc2_sub
 
 if __name__ == '__main__':
-    total_runs = 50
+    total_runs = 32
     num_processes = 32  # number of CPU logical processors
-    numgens = 1000
+    numgens = 2000
 
     total_loc2_allele_freq = []
     total_loc3_allele_freq = []
@@ -399,6 +393,8 @@ if __name__ == '__main__':
             total_loc3_allele_freq.append(result[1])
             total_loc2_allele_freq_main.append(result[2])
             total_loc2_allele_freq_sub.append(result[3])
+
+    param_text = f"parameters: popsize=5000, maxsubsize=500, numinds=10, maxrepro=10, numgens=2000, parthreduction=0.2, parthpenalty=0.25"
 
     # plotting
     figure, axis = plt.subplots(2, 2, figsize=(16, 10))
@@ -439,5 +435,7 @@ if __name__ == '__main__':
     for run in range(total_runs):
         axis[1][1].plot(total_loc2_allele_freq_sub[run], color=plt.cm.rainbow(run / total_runs))
 
-    plt.tight_layout()
+    figure.suptitle(param_text, fontsize=14)
+    plt.subplots_adjust()  
+    plt.tight_layout(rect=[0, 0, 1, 0.97])
     plt.show()
