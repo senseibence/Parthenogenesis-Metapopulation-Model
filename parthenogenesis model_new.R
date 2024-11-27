@@ -170,7 +170,7 @@ Rmut <- 1/10000
 main_encounter <- 4
 sub_encounter <- min(0.04*maxsubpop, main_encounter/2)
 Nsexual <- 10
-Npar_sex <- 9
+Npar_sex <- round(Nsexual * 0.75)
 Npar <- 2
 recom12 <- 0.5
 recom23 <- 0.5
