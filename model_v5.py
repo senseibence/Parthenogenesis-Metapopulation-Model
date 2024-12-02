@@ -18,13 +18,13 @@ def run_simulation(run):
     
     # parameters
     popsize=5000
-    maxsubsize=100
+    maxsubsize=25
     migration = (1/popsize)
     mutrecip=10000000
     mutation = 1/mutrecip
     rec1 = 0.5
     rec2 = 0.5
-    numinds=10
+    numinds=2
     numindssub=min(int(0.04*maxsubsize), numinds//2)
     maxrepro=10
     f=1
@@ -394,7 +394,7 @@ if __name__ == '__main__':
             total_loc2_allele_freq_main.append(result[2])
             total_loc2_allele_freq_sub.append(result[3])
 
-    param_text = f"parameters: popsize=5000, maxsubsize=100, numinds=10, maxrepro=10, numgens=2000, parthreduction=0.2, parthpenalty=0.25, migration=(1/popsize)"
+    param_text = f"parameters: popsize=5000, maxsubsize=25, numinds=2, maxrepro=10, numgens=2000, parthreduction=0.2, parthpenalty=0.25, migration=(1/popsize)"
 
     # plotting
     figure, axis = plt.subplots(2, 2, figsize=(16, 10))
