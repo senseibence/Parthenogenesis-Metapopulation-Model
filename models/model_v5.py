@@ -7,6 +7,25 @@ import multiprocessing
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
+# parameters
+popsize=500
+maxsubsize=50
+migration = 1/5000
+mutrecip=10000
+mutation = 1/mutrecip
+rec1 = 0.5
+rec2 = 0.5
+numinds=4
+numindssub=min(int(0.04*maxsubsize), numinds//2)
+maxrepro=10
+f=1
+overdom = 0
+if (f != 1): overdom = 1
+numgens=1000
+parthreduction=0.2
+parthrepro = int(parthreduction*maxrepro+0.5)
+parthpenalty = 0.1
+
 # helper function to create a matrix
 def createMatrix(rows, cols):
     rows += 1
@@ -16,24 +35,19 @@ def createMatrix(rows, cols):
 # simulation function for each run
 def run_simulation(run):
     
-    # parameters
-    popsize=5000
-    maxsubsize=25
-    migration = (1/popsize)
-    mutrecip=10000000
-    mutation = 1/mutrecip
-    rec1 = 0.5
-    rec2 = 0.5
-    numinds=2
-    numindssub=min(int(0.04*maxsubsize), numinds//2)
-    maxrepro=10
-    f=1
-    overdom = 0
-    if (f != 1): overdom = 1
-    numgens=2000
-    parthreduction=0.2
-    parthrepro = int(parthreduction*maxrepro+0.5)
-    parthpenalty = 0.25
+    '''global popsize
+    global maxsubsize
+    global migration
+    global mutation
+    global rec1
+    global rec2
+    global numinds
+    global numindssub
+    global maxrepro
+    global overdom
+    global numgens
+    global parthrepro
+    global parthpenalty'''
 
     randomseed = random.randint(0, 4999) + run  # ensure different seeds
     random.seed(randomseed)
@@ -68,6 +82,10 @@ def run_simulation(run):
     # lists for tracking main and subpopulation separately
     loc2freq_main = [0] * (2*numgens + 1)
     loc2freq_sub = [0] * (2*numgens + 1)
+
+    # lists for tracking number of individuals in main and subpopulation
+    num_in_main = [0] * (2*numgens + 1)
+    num_in_sub = [0] * (2*numgens + 1)
 
     meeting = createMatrix(popsize, numinds)
     sexmothers = [0] * (popsize + 1)
@@ -363,28 +381,33 @@ def run_simulation(run):
                 num_sub += 1
                 loc2count_sub += loc2allele1[a] + loc2allele2[a]
 
-        if num_main > 0: loc2freq_main[i] = loc2count_main / (2 * num_main)   
+        if num_main > 0: loc2freq_main[i] = loc2count_main / (2 * num_main)
         else: loc2freq_main[i] = 0
         if num_sub > 0: loc2freq_sub[i] = loc2count_sub / (2 * num_sub)
         else: loc2freq_sub[i] = 0
+        num_in_main[i] = num_main
+        num_in_sub[i] = num_sub
             
     # prepare data for plotting
     y_axis_loc2 = loc2freq[1:numgens+1]
     y_axis_loc3 = loc3freq[1:numgens+1]
     y_axis_loc2_main = loc2freq_main[1:numgens+1]
     y_axis_loc2_sub = loc2freq_sub[1:numgens+1]
+    y_axis_num_main = num_in_main[1:numgens+1]
+    y_axis_num_sub = num_in_sub[1:numgens+1]
 
-    return y_axis_loc2, y_axis_loc3, y_axis_loc2_main, y_axis_loc2_sub
+    return y_axis_loc2, y_axis_loc3, y_axis_loc2_main, y_axis_loc2_sub, y_axis_num_main, y_axis_num_sub
 
 if __name__ == '__main__':
     total_runs = 32
     num_processes = 32  # number of CPU logical processors
-    numgens = 2000
 
     total_loc2_allele_freq = []
     total_loc3_allele_freq = []
     total_loc2_allele_freq_main = []
     total_loc2_allele_freq_sub = []
+    total_num_main = []
+    total_num_sub = []
 
     with multiprocessing.Pool(processes=num_processes) as pool:
         results = []
@@ -393,11 +416,13 @@ if __name__ == '__main__':
             total_loc3_allele_freq.append(result[1])
             total_loc2_allele_freq_main.append(result[2])
             total_loc2_allele_freq_sub.append(result[3])
+            total_num_main.append(result[4])
+            total_num_sub.append(result[5])
 
-    param_text = f"parameters: popsize=5000, maxsubsize=25, numinds=2, maxrepro=10, numgens=2000, parthreduction=0.2, parthpenalty=0.25, migration=(1/popsize)"
+    param_text = f"runs={total_runs}, numgens={numgens}, popsize={popsize}, maxsubsize={maxsubsize}, migration={migration}, mutation={mutation}, numinds={numinds}, numindssub={numindssub}, maxrepro={maxrepro}, overdom={overdom}, parthreduction={parthreduction}, parthpenalty={parthpenalty}"
 
     # plotting
-    figure, axis = plt.subplots(2, 2, figsize=(16, 10))
+    figure, axis = plt.subplots(2, 3, figsize=(20, 13))
 
     # plot 1
     axis[0][0].set_xlim(0, numgens)
@@ -409,22 +434,22 @@ if __name__ == '__main__':
         axis[0][0].plot(total_loc2_allele_freq[run], color=plt.cm.rainbow(run / total_runs))
 
     # plot 2
-    axis[0][1].set_xlim(0, numgens)
-    axis[0][1].set_ylim(0, 0.6)
-    axis[0][1].set_xlabel("Generations")
-    axis[0][1].set_ylabel("Frequency")
-    axis[0][1].set_title("Average Locus 3 (Neutral) Allele Frequency")
-    for run in range(total_runs):
-        axis[0][1].plot(total_loc3_allele_freq[run], color=plt.cm.rainbow(run / total_runs))
-
-    # plot 3
     axis[1][0].set_xlim(0, numgens)
     axis[1][0].set_ylim(0, 0.6)
     axis[1][0].set_xlabel("Generations")
     axis[1][0].set_ylabel("Frequency")
-    axis[1][0].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency Main Population")
+    axis[1][0].set_title("Average Locus 3 (Neutral) Allele Frequency")
     for run in range(total_runs):
-        axis[1][0].plot(total_loc2_allele_freq_main[run], color=plt.cm.rainbow(run / total_runs))
+        axis[1][0].plot(total_loc3_allele_freq[run], color=plt.cm.rainbow(run / total_runs))
+
+    # plot 3
+    axis[0][1].set_xlim(0, numgens)
+    axis[0][1].set_ylim(0, 0.6)
+    axis[0][1].set_xlabel("Generations")
+    axis[0][1].set_ylabel("Frequency")
+    axis[0][1].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency Main Population")
+    for run in range(total_runs):
+        axis[0][1].plot(total_loc2_allele_freq_main[run], color=plt.cm.rainbow(run / total_runs))
 
     # plot 4
     axis[1][1].set_xlim(0, numgens)
@@ -434,8 +459,26 @@ if __name__ == '__main__':
     axis[1][1].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency Subpopulation")
     for run in range(total_runs):
         axis[1][1].plot(total_loc2_allele_freq_sub[run], color=plt.cm.rainbow(run / total_runs))
+    
+    # plot 5
+    axis[0][2].set_xlim(0, numgens)
+    axis[0][2].set_ylim(0, popsize)
+    axis[0][2].set_xlabel("Generations")
+    axis[0][2].set_ylabel("Quantity")
+    axis[0][2].set_title("Number of Individuals Main Population")
+    for run in range(total_runs):
+        axis[0][2].plot(total_num_main[run], color=plt.cm.rainbow(run / total_runs))
 
-    figure.suptitle(param_text, fontsize=12)
+    # plot 6
+    axis[1][2].set_xlim(0, numgens)
+    axis[1][2].set_ylim(0, maxsubsize)
+    axis[1][2].set_xlabel("Generations")
+    axis[1][2].set_ylabel("Quantity")
+    axis[1][2].set_title("Number of Individuals Subpopulation")
+    for run in range(total_runs):
+        axis[1][2].plot(total_num_sub[run], color=plt.cm.rainbow(run / total_runs))
+
+    figure.suptitle(param_text, fontsize=13, fontweight="bold")
     plt.subplots_adjust()  
     plt.tight_layout(rect=[0, 0, 1, 0.97])
     plt.show()
