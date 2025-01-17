@@ -585,7 +585,7 @@ if __name__ == '__main__':
     for run in range(total_runs):
         axis[1][2].plot(total_num_sub[run], color=plt.cm.rainbow(run / total_runs))
 
-    figure.suptitle(param_text, fontsize=13, fontweight="bold")
+    figure.suptitle(param_text, fontsize=12, fontweight="bold")
     plt.subplots_adjust()
     plt.tight_layout(rect=[0, 0, 1, 0.97])
     plt.savefig(plot_path)
