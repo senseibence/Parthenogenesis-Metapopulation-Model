@@ -1,29 +1,33 @@
 # Parthenogenesis Metapopulation Model v6
 # run main population first, then subpopulation
+# modified for seawulf cluster
 
 import random
 import multiprocessing
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import sys
+inputs = sys.argv[1:]
 
 # parameters
-popsize = 500
-maxsubsize = 50
-migration = 1/5000
-mutrecip = 10000
+popsize = int(inputs[0])
+maxsubsize = int(inputs[1])
+migrecip = int(inputs[2])
+migration = 0
+if (migrecip != 0): migration = 1/migrecip
+mutrecip = int(inputs[3])
 mutation = 1/mutrecip
-rec1 = 0.5
-rec2 = 0.5
-numinds = 4
+rec1 = float(inputs[4])
+rec2 = float(inputs[5])
+numinds = int(inputs[6])
 numindssub = min(int(0.04*maxsubsize), numinds//2)
-maxrepro = 10
-f = 1
-overdom = 0
-if (f != 1): overdom = 1
-numgens = 1000
-parthreduction = 0.2
+maxrepro = int(inputs[7])
+overdom = int(inputs[8]) # 0 = fitness dominance, 1 = fitness overdominance
+numgens = int(inputs[9])
+parthreduction = float(inputs[10])
 parthrepro = int(parthreduction*maxrepro + 0.5)
-parthpenalty = 0.1
+parthpenalty = float(inputs[11])
+plot_path = f"../graphs/sim{inputs[12]}.png"
 
 # helper function to create a matrix
 def createMatrix(rows, cols):
@@ -502,8 +506,8 @@ def run_simulation(run):
     return y_axis_loc2_main, y_axis_loc2_sub, y_axis_loc3_main, y_axis_loc3_sub, y_axis_num_main, y_axis_num_sub
 
 if __name__ == '__main__':
-    total_runs = 32
-    num_processes = 32  # number of CPU logical processors
+    total_runs = 96
+    num_processes = 96  # number of CPU logical processors
 
     total_loc2_allele_freq_main = []
     total_loc2_allele_freq_sub = []
@@ -584,4 +588,5 @@ if __name__ == '__main__':
     figure.suptitle(param_text, fontsize=13, fontweight="bold")
     plt.subplots_adjust()
     plt.tight_layout(rect=[0, 0, 1, 0.97])
+    plt.savefig(plot_path)
     plt.show()
