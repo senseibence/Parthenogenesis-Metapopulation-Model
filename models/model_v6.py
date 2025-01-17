@@ -31,28 +31,7 @@ def createMatrix(rows, cols):
     cols += 1
     return [[0 for x in range(cols)] for y in range(rows)]
 
-def run_phases(
-    pop_label,
-    current_pop_size,
-    overdom,
-    sex, location,
-    loc1allele1, loc1allele2,
-    loc2allele1, loc2allele2,
-    loc3allele1, loc3allele2,
-    offspringalive, offspringsex, offspringlocation,
-    offspringloc1allele1, offspringloc1allele2,
-    offspringloc2allele1, offspringloc2allele2,
-    offspringloc3allele1, offspringloc3allele2,
-    score, originalindex,
-    newoffspringalive, newoffspringsex, newoffspringlocation,
-    newoffspringloc1allele1, newoffspringloc1allele2,
-    newoffspringloc2allele1, newoffspringloc2allele2,
-    newoffspringloc3allele1, newoffspringloc3allele2,
-    meeting,
-    mutation, rec1, rec2, maxrepro,
-    parthrepro, parthpenalty,
-    numinds_for_pop,
-):
+def run_phases(current_popsize, sex, location, loc1allele1, loc1allele2, loc2allele1, loc2allele2, loc3allele1, loc3allele2, offspringalive, offspringsex, offspringlocation, offspringloc1allele1, offspringloc1allele2, offspringloc2allele1, offspringloc2allele2, offspringloc3allele1, offspringloc3allele2, score, originalindex, newoffspringalive, newoffspringsex, newoffspringlocation, newoffspringloc1allele1, newoffspringloc1allele2, newoffspringloc2allele1, newoffspringloc2allele2, newoffspringloc3allele1, newoffspringloc3allele2, meeting, mutation, rec1, rec2, numinds_for_popsize, maxrepro, overdom, parthrepro, parthpenalty):
     
     for i in range(len(offspringalive)):
         offspringalive[i] = 0
@@ -66,7 +45,8 @@ def run_phases(
         offspringloc3allele2[i] = 0
     
     # mutation phase
-    for j in range(1, current_pop_size+1):
+    for j in range(1, current_popsize+1):
+
         # locus 1 allele 1
         z = random.random()
         if z < mutation: loc1allele1[j] = abs(loc1allele1[j] - 1)
@@ -92,23 +72,23 @@ def run_phases(
         if z < mutation: loc3allele2[j] = 0.5
 
     # encounter phase
-    sexmothers = [0]*(current_pop_size + 2)
-    sexfathers = [0]*(current_pop_size + 2)
-    parthmothers = [0]*(current_pop_size + 2)
+    sexmothers = [0]*(current_popsize + 1)
+    sexfathers = [0]*(current_popsize + 1)
+    parthmothers = [0]*(current_popsize + 1)
 
-    for a in range(1, current_pop_size+1):
-        x = numinds_for_pop
+    for a in range(1, current_popsize+1):
+        x = numinds_for_popsize
         
         for b in range(1, x+1):
             temp_list = []
 
             while True:
-                if len(temp_list) >= current_pop_size: break
-                zz = random.randint(1, current_pop_size)
+                if len(temp_list) >= current_popsize: break
+                zz = random.randint(1, current_popsize)
                 if a != zz and location[a] == location[zz]: break
                 if zz not in temp_list: temp_list.append(zz)
 
-            if len(temp_list) < current_pop_size:
+            if len(temp_list) < current_popsize:
                 if b <= len(meeting[a]) - 1:
                     meeting[a][b] = zz
 
@@ -116,10 +96,10 @@ def run_phases(
     parthmatingscount = 0
 
     # find male that each female mates with
-    for a in range(1, current_pop_size+1):
+    for a in range(1, current_popsize+1):
         matingflag = 0
         if sex[a] == 1:
-            x = numinds_for_pop
+            x = numinds_for_popsize
 
             for b in range(1, x+1):
                 if sex[meeting[a][b]] == 0:
@@ -140,6 +120,7 @@ def run_phases(
     mhaplotype = 0
     phaplotype = 0
 
+    # maternal alleles
     m_alleles = [
         (loc1allele1, loc2allele1, loc3allele1),
         (loc1allele1, loc2allele1, loc3allele2),
@@ -197,7 +178,7 @@ def run_phases(
             offspringlocation[offspringcount] = location[mother]
 
     # record number of sexual offspring
-    sexual_offspring_thisgen = offspringcount
+    sexual_offspring = offspringcount
 
     # parthenogenetic reproduction
     for a in range(1, parthmatingscount+1):
@@ -228,7 +209,8 @@ def run_phases(
                 offspringsex[offspringcount] = 1 if random.random() < 0.5 else 0
                 offspringlocation[offspringcount] = location[mother]
 
-    parth_offspring_thisgen = offspringcount - sexual_offspring_thisgen
+    # record number of parthenogenetic offspring
+    parth_offspring = offspringcount - sexual_offspring
 
     # randomly sort offspring pool
     for a in range(1, offspringcount+1):
@@ -372,6 +354,7 @@ def run_simulation(run):
 
     # start main loop
     for gen in range(1, numgens+1):
+
         offspringcount_main = 0
         offspringcount_sub = 0
         
@@ -380,27 +363,7 @@ def run_simulation(run):
 
         # run main population
         if current_num_in_main > 0:
-            offspringcount_main = run_phases(
-                "main",
-                current_num_in_main, overdom,
-                sex_main, location_main,
-                loc1allele1_main, loc1allele2_main,
-                loc2allele1_main, loc2allele2_main,
-                loc3allele1_main, loc3allele2_main,
-                offspringalive_main, offspringsex_main, offspringlocation_main,
-                offspringloc1allele1_main, offspringloc1allele2_main,
-                offspringloc2allele1_main, offspringloc2allele2_main,
-                offspringloc3allele1_main, offspringloc3allele2_main,
-                score_main, originalindex_main,
-                newoffspringalive_main, newoffspringsex_main, newoffspringlocation_main,
-                newoffspringloc1allele1_main, newoffspringloc1allele2_main,
-                newoffspringloc2allele1_main, newoffspringloc2allele2_main,
-                newoffspringloc3allele1_main, newoffspringloc3allele2_main,
-                meeting_main,
-                mutation, rec1, rec2, maxrepro,
-                parthrepro, parthpenalty,
-                numinds
-            )
+            offspringcount_main = run_phases(current_num_in_main, sex_main, location_main, loc1allele1_main, loc1allele2_main, loc2allele1_main, loc2allele2_main, loc3allele1_main, loc3allele2_main, offspringalive_main, offspringsex_main, offspringlocation_main, offspringloc1allele1_main, offspringloc1allele2_main, offspringloc2allele1_main, offspringloc2allele2_main, offspringloc3allele1_main, offspringloc3allele2_main, score_main, originalindex_main, newoffspringalive_main, newoffspringsex_main, newoffspringlocation_main, newoffspringloc1allele1_main, newoffspringloc1allele2_main, newoffspringloc2allele1_main, newoffspringloc2allele2_main, newoffspringloc3allele1_main, newoffspringloc3allele2_main, meeting_main, mutation, rec1, rec2, numinds, maxrepro, overdom, parthrepro, parthpenalty)
 
         # migrate from main to sub
         go_sub = []
@@ -453,27 +416,7 @@ def run_simulation(run):
 
         # run subpopulation
         if current_num_in_sub > 0:
-            offspringcount_sub = run_phases(
-                "sub",
-                current_num_in_sub, overdom,
-                sex_sub, location_sub,
-                loc1allele1_sub, loc1allele2_sub,
-                loc2allele1_sub, loc2allele2_sub,
-                loc3allele1_sub, loc3allele2_sub,
-                offspringalive_sub, offspringsex_sub, offspringlocation_sub,
-                offspringloc1allele1_sub, offspringloc1allele2_sub,
-                offspringloc2allele1_sub, offspringloc2allele2_sub,
-                offspringloc3allele1_sub, offspringloc3allele2_sub,
-                score_sub, originalindex_sub,
-                newoffspringalive_sub, newoffspringsex_sub, newoffspringlocation_sub,
-                newoffspringloc1allele1_sub, newoffspringloc1allele2_sub,
-                newoffspringloc2allele1_sub, newoffspringloc2allele2_sub,
-                newoffspringloc3allele1_sub, newoffspringloc3allele2_sub,
-                meeting_sub,
-                mutation, rec1, rec2, maxrepro,
-                parthrepro, parthpenalty,
-                numindssub
-            )
+            offspringcount_sub = run_phases(current_num_in_sub, sex_sub, location_sub, loc1allele1_sub, loc1allele2_sub, loc2allele1_sub, loc2allele2_sub, loc3allele1_sub, loc3allele2_sub, offspringalive_sub, offspringsex_sub, offspringlocation_sub, offspringloc1allele1_sub, offspringloc1allele2_sub, offspringloc2allele1_sub, offspringloc2allele2_sub, offspringloc3allele1_sub, offspringloc3allele2_sub, score_sub, originalindex_sub, newoffspringalive_sub, newoffspringsex_sub, newoffspringlocation_sub, newoffspringloc1allele1_sub, newoffspringloc1allele2_sub, newoffspringloc2allele1_sub, newoffspringloc2allele2_sub, newoffspringloc3allele1_sub, newoffspringloc3allele2_sub, meeting_sub, mutation, rec1, rec2, numindssub, maxrepro, overdom, parthrepro, parthpenalty)
 
         # migrate from sub to main
         go_main = []
@@ -547,15 +490,14 @@ def run_simulation(run):
         
         num_in_main[gen] = current_num_in_main
         num_in_sub[gen] = current_num_in_sub
-        print(f"Main Population: {current_num_in_main}, Subpopulation: {current_num_in_sub}, Sum: {current_num_in_main + current_num_in_sub}")
 
     # prepare data for plotting
     y_axis_loc2_main = loc2freq_main[1:numgens+1]
     y_axis_loc2_sub = loc2freq_sub[1:numgens+1]
     y_axis_loc3_main = loc3freq_main[1:numgens+1]
     y_axis_loc3_sub = loc3freq_sub[1:numgens+1]
-    y_axis_num_main = num_in_main[1:numgens+1]
-    y_axis_num_sub = num_in_sub[1:numgens+1]
+    y_axis_num_main = num_in_main[0:numgens+1]
+    y_axis_num_sub = num_in_sub[0:numgens+1]
 
     return y_axis_loc2_main, y_axis_loc2_sub, y_axis_loc3_main, y_axis_loc3_sub, y_axis_num_main, y_axis_num_sub
 
@@ -569,14 +511,6 @@ if __name__ == '__main__':
     total_loc3_allele_freq_sub = []
     total_num_main = []
     total_num_sub = []
-
-    '''result = run_simulation(total_runs)
-    total_loc2_allele_freq.append(result[0])
-    total_loc3_allele_freq.append(result[1])
-    total_loc2_allele_freq_main.append(result[2])
-    total_loc2_allele_freq_sub.append(result[3])
-    total_num_main.append(result[4])
-    total_num_sub.append(result[5])'''
 
     with multiprocessing.Pool(processes=num_processes) as pool:
         results = []
@@ -595,7 +529,7 @@ if __name__ == '__main__':
 
     # plot 1
     axis[0][0].set_xlim(0, numgens)
-    axis[0][0].set_ylim(0, 0.6)
+    axis[0][0].set_ylim(0, 0.55)
     axis[0][0].set_xlabel("Generations")
     axis[0][0].set_ylabel("Frequency")
     axis[0][0].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency Main Population")
@@ -604,7 +538,7 @@ if __name__ == '__main__':
 
     # plot 2
     axis[1][0].set_xlim(0, numgens)
-    axis[1][0].set_ylim(0, 0.6)
+    axis[1][0].set_ylim(0, 0.55)
     axis[1][0].set_xlabel("Generations")
     axis[1][0].set_ylabel("Frequency")
     axis[1][0].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency Subpopulation")
@@ -613,7 +547,7 @@ if __name__ == '__main__':
 
     # plot 3
     axis[0][1].set_xlim(0, numgens)
-    axis[0][1].set_ylim(0, 0.6)
+    axis[0][1].set_ylim(0, 0.55)
     axis[0][1].set_xlabel("Generations")
     axis[0][1].set_ylabel("Frequency")
     axis[0][1].set_title("Average Locus 3 (Neutral) Allele Frequency Main Population")
@@ -622,7 +556,7 @@ if __name__ == '__main__':
 
     # plot 4
     axis[1][1].set_xlim(0, numgens)
-    axis[1][1].set_ylim(0, 0.6)
+    axis[1][1].set_ylim(0, 0.55)
     axis[1][1].set_xlabel("Generations")
     axis[1][1].set_ylabel("Frequency")
     axis[1][1].set_title("Average Locus 3 (Neutral) Allele Frequency Subpopulation")

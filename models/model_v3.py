@@ -1,7 +1,7 @@
 # Parthenogenesis Metapopulation Model v3
 # changed allele values from continuous to discrete
-# made several bug fixes in encounter and mating phases
 # discontinued custom RNG
+# bug fixes: prevent unintended mating, prevent self-encounters, allow for no encounters
 
 popsize=100
 # popsize = int(input("Enter size of metapopulation: "))

@@ -1,6 +1,6 @@
 # Parthenogenesis Metapopulation Model v5
 # tracking main and subpopulation separately
-# made bug fix in mating phase
+# bug fix: female will mate with first male she encounters instead of last
 
 import random
 import multiprocessing
