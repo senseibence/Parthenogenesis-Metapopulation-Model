@@ -1,5 +1,5 @@
 # Parthenogenesis Metapopulation Model v6
-# run main population first, then subpopulation
+# run main -> migrate main to sub -> run sub -> migrate sub to main
 # modified for seawulf cluster
 
 import random
