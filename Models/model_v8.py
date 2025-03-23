@@ -1,12 +1,16 @@
 # Parthenogenesis Metapopulation Model v8
-# bug fix: was double counting migrants
 # added explicit clearing of previous generation arrays (redundancy)
 # reordered migration structure: fill main, fill sub, collect migrants, append migrants
+# subpopulation increases by reproduction and migration
+# failed migrants die
+# saving results to csv
 
 import random
 import multiprocessing
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import os
+import csv
 import sys
 inputs = sys.argv[1:]
 
@@ -625,4 +629,16 @@ if __name__ == '__main__':
     plt.subplots_adjust()
     plt.tight_layout(rect=[0, 0, 1, 0.97])
     plt.savefig(plot_path)
-    plt.show()
+    # plt.show()
+
+    count_locus2_main = sum(1 for run in total_loc2_allele_freq_main if any(freq == 0.5 for freq in run))
+    count_locus2_sub  = sum(1 for run in total_loc2_allele_freq_sub if any(freq == 0.5 for freq in run))
+    count_locus3_main = sum(1 for run in total_loc3_allele_freq_main if any(freq == 0.5 for freq in run))
+    count_locus3_sub  = sum(1 for run in total_loc3_allele_freq_sub if any(freq == 0.5 for freq in run))
+    
+    output = "../outputs/results.csv"
+    file_not_exist = ((not os.path.exists(output)) or (os.path.getsize(output) == 0))
+    with open(output, "a", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        if file_not_exist: writer.writerow(["ID", "Locus 2 Main", "Locus 2 Sub", "Locus 3 Main", "Locus 3 Sub"])
+        writer.writerow([inputs[12], count_locus2_main, count_locus2_sub, count_locus3_main, count_locus3_sub])
