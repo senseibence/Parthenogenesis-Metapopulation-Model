@@ -1,5 +1,7 @@
 # Parthenogenesis Metapopulation Model v7
+# bug fix: was double counting migrants
 # run main -> run sub -> migrate main to sub -> migrate sub to main
+# subpopulation increases only by migration
 
 import random
 import multiprocessing
@@ -403,7 +405,7 @@ def run_simulation(run):
             loc3allele1_sub[current_num_in_sub] = newoffspringloc3allele1_main[i]
             loc3allele2_sub[current_num_in_sub] = newoffspringloc3allele2_main[i]
 
-        current_num_in_sub = min(current_num_in_sub+len(go_sub), maxsubsize)
+        current_num_in_sub = min(current_num_in_sub, maxsubsize)
         current_num_in_main = popsize-current_num_in_sub
 
         counter = 1
@@ -452,7 +454,7 @@ def run_simulation(run):
             loc3allele1_main[current_num_in_main] = newoffspringloc3allele1_sub[i]
             loc3allele2_main[current_num_in_main] = newoffspringloc3allele2_sub[i]
             
-        current_num_in_main = min(current_num_in_main+len(go_main), popsize)
+        current_num_in_main = min(current_num_in_main, popsize)
         current_num_in_sub = popsize-current_num_in_main
 
         counter = 1
