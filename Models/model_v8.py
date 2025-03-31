@@ -578,7 +578,7 @@ if __name__ == '__main__':
     axis[0][0].set_ylabel("Frequency")
     axis[0][0].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency Main Population")
     for run in range(total_runs):
-            axis[0][0].plot(total_loc2_allele_freq_main[run], color=plt.cm.rainbow(run / total_runs))
+        axis[0][0].plot(total_loc2_allele_freq_main[run], color=plt.cm.rainbow(run / total_runs))
 
     # plot 2
     axis[1][0].set_xlim(0, numgens)
@@ -587,7 +587,7 @@ if __name__ == '__main__':
     axis[1][0].set_ylabel("Frequency")
     axis[1][0].set_title("Average Locus 2 (Parthenogenetic) Allele Frequency Subpopulation")
     for run in range(total_runs):
-            axis[1][0].plot(total_loc2_allele_freq_sub[run], color=plt.cm.rainbow(run / total_runs))
+        axis[1][0].plot(total_loc2_allele_freq_sub[run], color=plt.cm.rainbow(run / total_runs))
 
     # plot 3
     axis[0][1].set_xlim(0, numgens)
