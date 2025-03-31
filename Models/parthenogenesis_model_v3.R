@@ -1,3 +1,7 @@
+# added multiprocessing
+# reading parameters from command line
+# writing results to files
+
 #dominance or overdominance
 fitness_mode <- function(fitness, pop){
   if(fitness == 1){ #dominance
