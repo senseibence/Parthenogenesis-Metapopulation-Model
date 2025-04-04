@@ -168,21 +168,24 @@ reproduction <- function(sexual, par_sex, par, Nsexual, Npar_sex, Npar, pop, loc
 
 args <- commandArgs(trailingOnly = TRUE)
 
+# modified order to work with python parameters directly
 mainpop <- as.numeric(args[1])
 maxsubpop <- as.numeric(args[2])
-fitness <- as.numeric(args[3])
+migration_input <- as.numeric(args[3])
+migration <- 1 / migration_input
 Rmut_input <- as.numeric(args[4])
 Rmut <- 1 / Rmut_input
-main_encounter <- as.numeric(args[5])
+recom12 <- as.numeric(args[5])
+recom23 <- as.numeric(args[6])
+main_encounter <- as.numeric(args[7])
 sub_encounter <- max(1, min(floor(0.04 * maxsubpop), main_encounter %/% 2))
-Nsexual <- as.numeric(args[6])
-Npar_sex <- as.numeric(args[7])
-Npar <- as.numeric(args[8])
-recom12 <- as.numeric(args[9])
-recom23 <- as.numeric(args[10])
-migration_input <- as.numeric(args[11])
-migration <- 1/migration_input
-generation <- as.numeric(args[12])
+Nsexual <- as.numeric(args[8])
+fitness <- (as.numeric(args[9]) + 1)
+generation <- as.numeric(args[10])
+Npar_input <- as.numeric(args[11])
+Npar <- as.integer(Nsexual * Npar_input + 0.5)
+Npar_sex_input <- as.numeric(args[12])
+Npar_sex <- as.integer(Nsexual * (1 - Npar_sex_input) + 0.5)
 simulation_id <- args[13]
 run <- 96
 
