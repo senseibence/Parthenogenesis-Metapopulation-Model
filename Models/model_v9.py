@@ -1,5 +1,8 @@
 # Parthenogenesis Metapopulation Model v9
+
+# changed allele values back to continuous [0, 0.5] (from discrete)
 # combined encounter + mating phase
+# all female parthenogenetic offspring 
 # removed meeting matrix for memory efficiency
 # initialized all arrays with -1 for safety
 # plotting sexual + parthenogenetic offspring
@@ -32,7 +35,7 @@ numgens = int(inputs[10])
 parthreduction = float(inputs[11])
 parthrepro = int(parthreduction*maxrepro + 0.5)
 parthpenalty = float(inputs[12])
-plot_path = f"/gpfs/scratch/blukacsy/graphs/sim{inputs[13]}.png" 
+plot_path = f"/gpfs/scratch/blukacsy/graphs/sim{inputs[13]}.png"
 
 def clearArray(array):
     for i in range(len(array)):
@@ -86,19 +89,19 @@ def run_phases(current_popsize, sex, location, loc1allele1, loc1allele2, loc2all
 
         # locus 2 allele 1
         z = random.random()
-        if z < mutation: loc2allele1[i] = 0.5
-        
+        if z < mutation: loc2allele1[i] = random.random()/2
+                
         # locus 2 allele 2
         z = random.random()
-        if z < mutation: loc2allele2[i] = 0.5
-        
+        if z < mutation: loc2allele2[i] = random.random()/2
+            
         # locus 3 allele 1
         z = random.random()
-        if z < mutation: loc3allele1[i] = 0.5
+        if z < mutation: loc3allele1[i] = random.random()/2
 
         # locus 3 allele 2
         z = random.random()
-        if z < mutation: loc3allele2[i] = 0.5
+        if z < mutation: loc3allele2[i] = random.random()/2
 
     sexmothers = [0]*(current_popsize + 1)
     sexfathers = [0]*(current_popsize + 1)
@@ -227,7 +230,7 @@ def run_phases(current_popsize, sex, location, loc1allele1, loc1allele2, loc2all
                 offspringloc3allele2[offspringcount] = alleles[2][mother]
 
                 offspringalive[offspringcount] = 1
-                offspringsex[offspringcount] = 1 if random.random() < 0.5 else 0
+                offspringsex[offspringcount] = 1 # all female parthenogenetic offspring 
                 offspringlocation[offspringcount] = location[mother]
 
     parth_offspring = offspringcount - sexual_offspring
@@ -351,7 +354,7 @@ def run_simulation(run):
     num_parth_offspring = [-1]*(numgens + 1)
     num_males = [-1]*(numgens + 1)
     num_females = [-1]*(numgens + 1)
-    male_female_ratio = [-1]*(numgens + 1)
+    female_male_ratio = [-1]*(numgens + 1)
 
     num_in_main[0] = popsize
     num_in_sub[0] = 0
@@ -373,7 +376,7 @@ def run_simulation(run):
     male_female_count = countMaleFemale(sex_main)
     num_males[0] = male_female_count[0]
     num_females[0] = male_female_count[1]
-    male_female_ratio[0] = num_males[0] / max(1, num_females[0])
+    female_male_ratio[0] = num_females[0] / max(1, num_males[0])
 
     # start main loop
     for gen in range(1, numgens+1):
@@ -549,7 +552,7 @@ def run_simulation(run):
         male_female_count_sub = countMaleFemale(sex_sub)
         num_males[gen] = male_female_count_main[0] + male_female_count_sub[0]
         num_females[gen] = male_female_count_main[1] + male_female_count_sub[1]
-        male_female_ratio[gen] = num_males[gen] / max(1, num_females[gen])
+        female_male_ratio[gen] = num_females[gen] / max(1, num_males[gen])
 
     y_axis_loc2_main = loc2freq_main[0:numgens+1]
     y_axis_loc2_sub = loc2freq_sub[0:numgens+1]
@@ -559,9 +562,9 @@ def run_simulation(run):
     y_axis_num_sub = num_in_sub[0:numgens+1]
     y_axis_num_sexual_offspring = num_sexual_offspring[0:numgens+1]
     y_axis_num_parth_offspring = num_parth_offspring[0:numgens+1]
-    y_axis_male_female_ratio = male_female_ratio[0:numgens+1]
+    y_axis_female_male_ratio = female_male_ratio[0:numgens+1]
 
-    return y_axis_loc2_main, y_axis_loc2_sub, y_axis_loc3_main, y_axis_loc3_sub, y_axis_num_main, y_axis_num_sub, y_axis_num_sexual_offspring, y_axis_num_parth_offspring, y_axis_male_female_ratio
+    return y_axis_loc2_main, y_axis_loc2_sub, y_axis_loc3_main, y_axis_loc3_sub, y_axis_num_main, y_axis_num_sub, y_axis_num_sexual_offspring, y_axis_num_parth_offspring, y_axis_female_male_ratio
 
 if __name__ == '__main__':
     total_runs = 96
@@ -575,7 +578,7 @@ if __name__ == '__main__':
     total_num_sub = []
     total_num_sexual_offspring = []
     total_num_parth_offspring = []
-    total_male_female_ratio = []
+    total_female_male_ratio = []
 
     with multiprocessing.Pool(processes=num_processes) as pool:
         for result in tqdm(pool.imap_unordered(run_simulation, range(total_runs)), total=total_runs):
@@ -587,7 +590,7 @@ if __name__ == '__main__':
             total_num_sub.append(result[5])
             total_num_sexual_offspring.append(result[6])
             total_num_parth_offspring.append(result[7])
-            total_male_female_ratio.append(result[8])
+            total_female_male_ratio.append(result[8])
 
     param_text = (f"runs={total_runs}, numgens={numgens}, popsize={popsize}, maxsubsize={maxsubsize}, migration={migration}, mutation={mutation}, numinds={numinds}, numindssub={numindssub}, maxrepro={maxrepro}, overdom={overdom}, parthreduction={parthreduction}, parthpenalty={parthpenalty}")
 
@@ -659,7 +662,7 @@ if __name__ == '__main__':
 
     # plot 8
     axis[2][1].set_xlim(0, numgens)
-    axis[2][1].set_ylim(0, popsize*parthrepro/2)
+    axis[2][1].set_ylim(0, popsize*parthrepro)
     axis[2][1].set_xlabel("Generations")
     axis[2][1].set_ylabel("Quantity")
     axis[2][1].set_title("Number of Parthenogenetic Offspring")
@@ -668,12 +671,12 @@ if __name__ == '__main__':
 
     # plot 9
     axis[2][2].set_xlim(0, numgens)
-    axis[2][2].set_ylim(-2, 4)
+    axis[2][2].set_ylim(0, 3)
     axis[2][2].set_xlabel("Generations")
     axis[2][2].set_ylabel("Ratio")
-    axis[2][2].set_title("Ratio of Males to Females")
+    axis[2][2].set_title("Ratio of Females to Males")
     for run in range(total_runs):
-        axis[2][2].plot(total_male_female_ratio[run], color=plt.cm.rainbow(run / total_runs), marker = 'o', linestyle='none', mfc='none', markersize=5)
+        axis[2][2].plot(total_female_male_ratio[run], color=plt.cm.rainbow(run / total_runs), marker = 'o', linestyle='none', mfc='none', markersize=5)
 
     figure.suptitle(param_text, fontsize=12, fontweight="bold")
     plt.tight_layout(rect=[0.02, 0.02, 0.98, 0.97])
