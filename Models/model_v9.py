@@ -258,15 +258,15 @@ def run_phases(current_popsize, sex, location, loc1allele1, loc1allele2, loc2all
 
     # selection phase
     for a in range(1, offspringcount+1):
-        if overdom == 0:
-            # fitness dominance
-            if newoffspringloc1allele1[a] + newoffspringloc1allele2[a] == 0:
-                newoffspringalive[a] = 0
-        else:
-            # fitness overdominance
-            total_alleles = newoffspringloc1allele1[a] + newoffspringloc1allele2[a]
-            if total_alleles == 0 or total_alleles == 2:
-                newoffspringalive[a] = 0
+        sum_alleles = newoffspringloc1allele1[a] + newoffspringloc1allele2[a]
+
+        # fitness dominance
+        if (overdom == 0):
+            if (sum_alleles == 0): newoffspringalive[a] = 0
+
+        # fitness overdominance
+        elif (overdom == 1):
+            if ((sum_alleles == 0) or (sum_alleles == 2)): newoffspringalive[a] = 0
 
     return offspringcount, sexual_offspring, parth_offspring
 
