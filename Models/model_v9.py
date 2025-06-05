@@ -32,7 +32,7 @@ numgens = int(inputs[10])
 parthreduction = float(inputs[11])
 parthrepro = int(parthreduction*maxrepro + 0.5)
 parthpenalty = float(inputs[12])
-plot_path = f"/gpfs/scratch/blukacsy/graphs/sim{inputs[13]}.png"
+plot_path = f"/gpfs/scratch/blukacsy/graphs/sim{inputs[13]}.png" 
 
 def clearArray(array):
     for i in range(len(array)):
@@ -592,7 +592,7 @@ if __name__ == '__main__':
     param_text = (f"runs={total_runs}, numgens={numgens}, popsize={popsize}, maxsubsize={maxsubsize}, migration={migration}, mutation={mutation}, numinds={numinds}, numindssub={numindssub}, maxrepro={maxrepro}, overdom={overdom}, parthreduction={parthreduction}, parthpenalty={parthpenalty}")
 
     # plotting
-    figure, axis = plt.subplots(3, 3, figsize=(20, 10))
+    figure, axis = plt.subplots(3, 3, figsize=(23, 20))
 
     # plot 1
     axis[0][0].set_xlim(0, numgens)
@@ -676,9 +676,8 @@ if __name__ == '__main__':
         axis[2][2].plot(total_male_female_ratio[run], color=plt.cm.rainbow(run / total_runs), marker = 'o', linestyle='none', mfc='none', markersize=5)
 
     figure.suptitle(param_text, fontsize=12, fontweight="bold")
-    plt.tight_layout(rect=[0.02, 0.02, 0.98, 0.98])
+    plt.tight_layout(rect=[0.02, 0.02, 0.98, 0.97])
     plt.savefig(plot_path)
-    # plt.show()
 
     def count_fixed_alleles(total_allele_freq):
         count_fixed = 0
