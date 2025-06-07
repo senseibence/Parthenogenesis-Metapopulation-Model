@@ -689,7 +689,7 @@ if __name__ == '__main__':
             broke_out = False
             for freq in run:
                 if (saw_max):
-                    if (freq != 0.5):
+                    if ((abs(freq - 0.5) > 1e-6)):
                         broke_out = True
                         break
                 else:
