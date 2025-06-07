@@ -683,17 +683,18 @@ if __name__ == '__main__':
     plt.savefig(plot_path)
 
     def count_fixed_alleles(total_allele_freq):
+        epsilon = 0.05
         count_fixed = 0
         for run in total_allele_freq:
             saw_max = False
             broke_out = False
             for freq in run:
                 if (saw_max):
-                    if ((abs(freq - 0.5) > 1e-6)):
+                    if (freq < (0.5 - epsilon)):
                         broke_out = True
                         break
                 else:
-                    if (abs(freq - 0.5) < 1e-6): saw_max = True
+                    if (freq > (0.5 - epsilon)): saw_max = True
             if (saw_max and not broke_out): count_fixed += 1
         return count_fixed
 
