@@ -1,0 +1,44 @@
+def create_parameters(filename):
+    
+    popsize = 5000
+    rec1 = 0.5
+    rec2 = 0.5
+    maxrepro = 300
+    overdom = 0
+    numgens = 10000
+    parthreduction = 0.01
+
+    maxsubsize_combos = [int(popsize*0.1), int(popsize*0.02), int(popsize*0.005)]
+    migration_combos = [popsize, popsize*10]
+    mutation_combos = [10000, 100000]
+    encounter_combos = [(1, 1), (1, 2), (2, 1), (2, 2), (1, 6), (6, 1), (10, 5), (16, 8), (24, 12), (50, 25)]
+    parthpenalty_combos = [0.0, 0.05, 0.15, 0.25]
+
+    header = ("popsize, maxsubsize, migration, mutation, rec1, rec2, numinds, numindssub, maxrepro, overdom, numgens, parthreduction, parthpenalty, plotnumber")
+    parameters = [header, ""]
+    total_combos = len(maxsubsize_combos) * len(migration_combos) * len(mutation_combos) * len(encounter_combos) * len(parthpenalty_combos)
+
+    counter = 1
+    def create_plotnumber(i):
+        plotnumber = f"{i:0{len(str(total_combos))}d}"
+        return plotnumber
+
+    for maxsubsize in maxsubsize_combos:
+        for migration in migration_combos:
+            for mutation in mutation_combos:
+                for encounter in encounter_combos:
+                    for parthpenalty in parthpenalty_combos:
+
+                        numinds, numindssub = encounter
+                        plotnumber = create_plotnumber(counter)
+                        counter += 1
+
+                        parameter = [popsize, maxsubsize, migration, mutation, rec1, rec2, numinds, numindssub, maxrepro, overdom, numgens, parthreduction, parthpenalty, plotnumber]
+                        
+                        parameter_string = " ".join(map(str, parameter))
+                        parameters.append(parameter_string)
+                    
+    with open(filename, 'w') as file:
+        file.write("\n".join(parameters))
+
+create_parameters("parameters_python_4.txt")
