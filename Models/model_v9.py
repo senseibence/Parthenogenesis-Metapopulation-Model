@@ -273,7 +273,7 @@ def run_phases(current_popsize, sex, location, loc1allele1, loc1allele2, loc2all
 @jit(nopython=True)
 def run_simulation(run):
 
-    randomseed = np.random.randint(0, 2**31) + run
+    randomseed = 4723 + run
     np.random.seed(randomseed)
 
     # main population primary arrays
