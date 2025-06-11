@@ -12,7 +12,7 @@ def create_parameters(filename):
     migration_combos = [popsize, popsize*10]
     mutation_combos = [10000, 100000]
     encounter_combos = [(1, 1), (1, 2), (2, 1), (2, 2), (1, 6), (6, 1), (10, 5), (16, 8), (24, 12), (50, 25)]
-    parthpenalty_combos = [0.0, 0.05, 0.15, 0.25]
+    parthpenalty_combos = [0.0, 0.01, 0.03, 0.05]
 
     header = ("popsize, maxsubsize, migration, mutation, rec1, rec2, numinds, numindssub, maxrepro, overdom, numgens, parthreduction, parthpenalty, plotnumber")
     parameters = [header, ""]
