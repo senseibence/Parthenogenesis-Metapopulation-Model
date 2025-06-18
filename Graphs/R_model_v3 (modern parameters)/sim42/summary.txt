@@ -1,8 +1,0 @@
-"parth_main_fixed_run","parth_sub_fixed_run","neutral_main_fixed_run","neutral_sub_fixed_run","no_max_sub_run","interact_run"
-NA,22,NA,17,NA,22
-NA,33,NA,44,NA,33
-NA,52,NA,60,NA,52
-NA,85,NA,64,NA,85
-NA,NA,NA,86,NA,NA
-NA,NA,NA,89,NA,NA
-NA,NA,NA,91,NA,NA
