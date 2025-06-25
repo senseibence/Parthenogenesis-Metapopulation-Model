@@ -273,7 +273,7 @@ def run_phases(current_popsize, sex, location, loc1allele1, loc1allele2, loc2all
 @jit(nopython=True)
 def run_simulation(run):
 
-    randomseed = 4723 + run
+    randomseed = 5002 + run
     np.random.seed(randomseed)
 
     # main population primary arrays
@@ -569,8 +569,8 @@ def run_simulation(run):
     return y_axis_loc2_main, y_axis_loc2_sub, y_axis_loc3_main, y_axis_loc3_sub, y_axis_num_main, y_axis_num_sub, y_axis_num_sexual_offspring, y_axis_num_parth_offspring, y_axis_female_male_ratio
 
 if __name__ == '__main__':
-    total_runs = 48
-    num_processes = 48
+    total_runs = 12
+    num_processes = 12
 
     total_loc2_allele_freq_main = []
     total_loc2_allele_freq_sub = []
@@ -684,24 +684,22 @@ if __name__ == '__main__':
     plt.tight_layout(rect=[0.02, 0.02, 0.98, 0.97])
     plt.savefig(plot_path)
 
+    start = int(0.9*numgens)
     def count_fixed_alleles(total_allele_freq):
-        epsilon = 0.03
-        buffer = 0.02
+        epsilon = 0.05
         count_fixed = 0
         for run in total_allele_freq:
+            truncated_run = run[start:]
             saw_max = False
-            broke_out = False
             attempts = 0
-            for freq in run:
-                if (saw_max):
-                    if (freq < (0.5 - epsilon - buffer)):
-                        if (attempts >= 1): 
-                            broke_out = True
-                            break
-                        attempts += 1
-                else:
-                    if (freq >= (0.5 - epsilon)): saw_max = True
-            if (saw_max and not broke_out): count_fixed += 1
+            for freq in truncated_run:
+                if (freq >= (0.5 - epsilon)): saw_max = True
+                if (freq < (0.5 - epsilon)):
+                    if (attempts >= 3): 
+                        saw_max = False
+                        break
+                    attempts += 1
+            if (saw_max): count_fixed += 1
         return count_fixed
 
     count_locus2_main = count_fixed_alleles(total_loc2_allele_freq_main)
