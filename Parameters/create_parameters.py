@@ -1,6 +1,6 @@
 def create_parameters(filename):
     
-    popsize = 5000
+    popsize = 50000
     rec1 = 0.5
     rec2 = 0.5
     maxrepro = 300
@@ -8,11 +8,11 @@ def create_parameters(filename):
     numgens = 10000
     parthreduction = 0.01
 
-    maxsubsize_combos = [int(popsize*0.1), int(popsize*0.02), int(popsize*0.005)]
+    maxsubsize_combos = [int(popsize*0.1), int(popsize*0.02), int(popsize*0.004), int(popsize*0.0005)]
     migration_combos = [popsize, popsize*10]
-    mutation_combos = [10000, 100000]
-    encounter_combos = [(1, 1), (1, 2), (2, 1), (2, 2), (1, 6), (6, 1), (10, 5), (16, 8), (24, 12), (50, 25)]
-    parthpenalty_combos = [0.0, 0.01, 0.03, 0.05]
+    mutation_combos = [10**8]
+    encounter_combos = [(1, 1), (1, 2), (2, 1), (2, 2), (1, 10), (10, 1), (12, 6), (24, 12), (50, 25)]
+    parthpenalty_combos = [0]
 
     header = ("popsize, maxsubsize, migration, mutation, rec1, rec2, numinds, numindssub, maxrepro, overdom, numgens, parthreduction, parthpenalty, plotnumber")
     parameters = [header, ""]
@@ -41,4 +41,4 @@ def create_parameters(filename):
     with open(filename, 'w') as file:
         file.write("\n".join(parameters))
 
-create_parameters("parameters_python_4.txt")
+create_parameters("parameters_python_5.txt")
