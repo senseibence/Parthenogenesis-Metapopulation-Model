@@ -9,10 +9,10 @@ def create_parameters(filename):
     parthreduction = 0.01
 
     maxsubsize_combos = [int(popsize*0.1), int(popsize*0.02), int(popsize*0.004), int(popsize*0.0008), int(popsize*0.00005)]
-    migration_combos = [popsize, popsize*10]
-    mutation_combos = [10**7, 10**8]
+    migration_combos = [popsize*10]
+    mutation_combos = [10**4, 10**5, 10**7, 10**8]
     encounter_combos = [(1, 1), (1, 2), (2, 1), (2, 2), (1, 10), (10, 1), (12, 6), (24, 12), (50, 25)]
-    parthpenalty_combos = [0]
+    parthpenalty_combos = [0, 1/300, 2/300, 9/300, 12/300]
 
     header = ("popsize, maxsubsize, migration, mutation, rec1, rec2, numinds, numindssub, maxrepro, overdom, numgens, parthreduction, parthpenalty, plotnumber")
     parameters = [header, ""]
@@ -41,4 +41,4 @@ def create_parameters(filename):
     with open(filename, 'w') as file:
         file.write("\n".join(parameters))
 
-create_parameters("parameters_python_6.txt")
+create_parameters("popsize_500k.txt")
