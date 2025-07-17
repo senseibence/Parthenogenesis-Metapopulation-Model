@@ -43,7 +43,7 @@ numgens = int(inputs[10])
 parthreduction = float(inputs[11])
 parthrepro = int(parthreduction*maxrepro + 0.5)
 parthpenalty = float(inputs[12])
-plot_path = f"/gpfs/scratch/blukacsy/graphs/sim{inputs[13]}.png"
+plot_number = str(inputs[13])
 
 @jit(nopython=True)
 def countMaleFemale(sex_list):
@@ -273,7 +273,7 @@ def run_phases(current_popsize, sex, location, loc1allele1, loc1allele2, loc2all
 @jit(nopython=True)
 def run_simulation(run):
 
-    randomseed = 5002 + run
+    randomseed = 7536 + run
     np.random.seed(randomseed)
 
     # main population primary arrays
@@ -569,8 +569,8 @@ def run_simulation(run):
     return y_axis_loc2_main, y_axis_loc2_sub, y_axis_loc3_main, y_axis_loc3_sub, y_axis_num_main, y_axis_num_sub, y_axis_num_sexual_offspring, y_axis_num_parth_offspring, y_axis_female_male_ratio
 
 if __name__ == '__main__':
-    total_runs = 12
-    num_processes = 12
+    total_runs = 96
+    num_processes = 96
 
     total_loc2_allele_freq_main = []
     total_loc2_allele_freq_sub = []
@@ -682,7 +682,46 @@ if __name__ == '__main__':
 
     figure.suptitle(param_text, fontsize=12, fontweight="bold")
     plt.tight_layout(rect=[0.02, 0.02, 0.98, 0.97])
-    plt.savefig(plot_path)
+
+    low_penalty = [0, 1/300, 2/300]
+    high_penalty = [9/300, 12/300]
+    low_encounter_main = [1, 2]
+    high_encounter_main = [10, 12, 24, 50]
+    low_encounter_sub = [1, 2]
+    high_encounter_sub = [6, 10, 12, 25]
+    low_mutation = [10**7, 10**8] # reciprocal
+    high_mutation = [10**4, 10**5] # reciprocal
+
+    if (popsize == 5000): 
+        low_maxsubsize = [25]
+        high_maxsubsize = [100, 500]
+    if (popsize == 50000): 
+        low_maxsubsize = [25, 200]
+        high_maxsubsize = [1000, 5000]
+    if (popsize == 500000): 
+        low_maxsubsize = [25, 400, 2000]
+        high_maxsubsize = [10000, 50000]
+
+    binary_id = ""
+    if (maxsubsize in low_maxsubsize): binary_id += "0"
+    if (maxsubsize in high_maxsubsize): binary_id += "1"
+    if (mutrecip in low_mutation): binary_id += "0"
+    if (mutrecip in high_mutation): binary_id += "1"
+    if (numinds in low_encounter_main): binary_id += "0"
+    if (numinds in high_encounter_main): binary_id += "1"
+    if (numindssub in low_encounter_sub): binary_id += "0"
+    if (numindssub in high_encounter_sub): binary_id += "1"
+    if (parthpenalty in low_penalty): binary_id += "0"
+    if (parthpenalty in high_penalty): binary_id += "1"
+
+    directory = f"/gpfs/scratch/blukacsy/parth_results/sim{plot_number} {binary_id}"
+    if (not os.path.exists(directory)): os.mkdir(directory)
+
+    plt.savefig(f"{directory}/graph.png")
+    np.save(f"{directory}/loc2_freq_main.npy", np.array(total_loc2_allele_freq_main))
+    np.save(f"{directory}/loc2_freq_sub.npy", np.array(total_loc2_allele_freq_sub))
+    np.save(f"{directory}/loc3_freq_main.npy", np.array(total_loc3_allele_freq_main))
+    np.save(f"{directory}/loc3_freq_sub.npy", np.array(total_loc3_allele_freq_sub))
 
     start = int(0.9*numgens)
     def count_fixed_alleles(total_allele_freq):
@@ -695,7 +734,7 @@ if __name__ == '__main__':
             for freq in truncated_run:
                 if (freq >= (0.5 - epsilon)): saw_max = True
                 if (freq < (0.5 - epsilon)):
-                    if (attempts >= 3): 
+                    if (attempts >= 10): 
                         saw_max = False
                         break
                     attempts += 1
@@ -707,9 +746,9 @@ if __name__ == '__main__':
     count_locus3_main = count_fixed_alleles(total_loc3_allele_freq_main)
     count_locus3_sub = count_fixed_alleles(total_loc3_allele_freq_sub)
 
-    output = "/gpfs/scratch/blukacsy/graphs/results.csv"
+    output = "/gpfs/scratch/blukacsy/parth_results/fixation_counts.csv"
     file_not_exist = ((not os.path.exists(output)) or (os.path.getsize(output) == 0))
-    with open(output, "a", newline="") as csvfile:
-        writer = csv.writer(csvfile)
-        if (file_not_exist): writer.writerow(["ID", "Locus_2_Main", "Locus_2_Sub", "Locus_3_Main", "Locus_3_Sub"])
-        writer.writerow([inputs[13], count_locus2_main, count_locus2_sub, count_locus3_main, count_locus3_sub])
+    with open(output, "a", newline="") as file:
+        writer = csv.writer(file)
+        if (file_not_exist): writer.writerow(["ID", "Main Locus #2", "Sub Locus #2", "Main Locus #3", "Sub Locus #3"])
+        writer.writerow([plot_number, count_locus2_main, count_locus2_sub, count_locus3_main, count_locus3_sub])
