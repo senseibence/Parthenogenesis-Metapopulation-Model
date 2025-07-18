@@ -43,7 +43,7 @@ numgens = int(inputs[10])
 parthreduction = float(inputs[11])
 parthrepro = int(parthreduction*maxrepro + 0.5)
 parthpenalty = float(inputs[12])
-plot_number = str(inputs[13])
+sim_number = str(inputs[13])
 
 @jit(nopython=True)
 def countMaleFemale(sex_list):
@@ -714,7 +714,7 @@ if __name__ == '__main__':
     if (parthpenalty in low_penalty): binary_id += "0"
     if (parthpenalty in high_penalty): binary_id += "1"
 
-    directory = f"/gpfs/scratch/blukacsy/parth_results/sim{plot_number} {binary_id}"
+    directory = f"/gpfs/scratch/blukacsy/parth_results/sim{sim_number} {binary_id}"
     if (not os.path.exists(directory)): os.mkdir(directory)
 
     plt.savefig(f"{directory}/graph.png")
@@ -751,4 +751,4 @@ if __name__ == '__main__':
     with open(output, "a", newline="") as file:
         writer = csv.writer(file)
         if (file_not_exist): writer.writerow(["ID", "Main Locus #2", "Sub Locus #2", "Main Locus #3", "Sub Locus #3"])
-        writer.writerow([plot_number, count_locus2_main, count_locus2_sub, count_locus3_main, count_locus3_sub])
+        writer.writerow([sim_number, count_locus2_main, count_locus2_sub, count_locus3_main, count_locus3_sub])
