@@ -1,4 +1,4 @@
-popsize, maxsubsize, migration, mutation, rec1, rec2, numinds, numindssub, maxrepro, overdom, numgens, parthreduction, parthpenalty, plotnumber
+popsize, maxsubsize, migration, mutation, rec1, rec2, numinds, numindssub, maxrepro, overdom, numgens, parthreduction, parthpenalty, simnumber
 
 5000 500 50000 10000 0.5 0.5 1 1 300 0 1000 0.01 0 001
 5000 500 50000 10000 0.5 0.5 1 1 300 0 1000 0.01 0.0033333333333333335 002
