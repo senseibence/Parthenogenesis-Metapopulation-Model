@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 from collections import defaultdict
 
-root = "Outputs"
+popsize = "50k"
+root = f"Outputs/popsize_{popsize}"
 arr_path_main_global = "loc2_freq_main.npy"
 arr_path_sub_global = "loc2_freq_sub.npy"
-results_path = "Results/popsize_5k.xlsx"
+results_path = f"Results/popsize_{popsize}.xlsx"
 
 groups = defaultdict(list)
 pattern = re.compile(r"sim(\d+) ([01]{5})$")
