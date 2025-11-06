@@ -1,18 +1,18 @@
 def create_parameters(filename):
     
-    popsize = 500000
+    popsize = 50000
     rec1 = 0.5
     rec2 = 0.5
     maxrepro = 300
     overdom = 0
     numgens = 10000
-    parthreduction = 0.01
+    parthreduction = 0.1
 
     # 5k: [int(popsize*0.1), int(popsize*0.02), int(popsize*0.005)]
     # 50k: [int(popsize*0.1), int(popsize*0.02), int(popsize*0.004), int(popsize*0.0005)]
     # 500k: [int(popsize*0.1), int(popsize*0.02), int(popsize*0.004), int(popsize*0.0008), int(popsize*0.00005)] 
 
-    maxsubsize_combos = [int(popsize*0.1), int(popsize*0.02), int(popsize*0.004), int(popsize*0.0008), int(popsize*0.00005)] 
+    maxsubsize_combos = [int(popsize*0.1), int(popsize*0.02), int(popsize*0.004), int(popsize*0.0005)]
     migration_combos = [popsize*10]
     mutation_combos = [10**4, 10**5, 10**7, 10**8]
     encounter_combos = [(1, 1), (1, 2), (2, 1), (2, 2), (1, 10), (10, 1), (12, 6), (24, 12), (50, 25)]
@@ -45,4 +45,4 @@ def create_parameters(filename):
     with open(filename, 'w') as file:
         file.write("\n".join(parameters))
 
-create_parameters("popsize_500k_gens_10k.txt")
+create_parameters("popsize_50k_gens_10k_parthreduction_0.1.txt")
